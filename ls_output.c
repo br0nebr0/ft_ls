@@ -40,6 +40,10 @@ char *get_mode(struct stat file)
 /* выводим все что прочли*/
 void printdirs(t_file *buf, char *flags)
 {
+	char *temp;
+
+	temp = ft_strdup(ctime(&(buf->la.tv_sec)));
+	temp[ft_strlen(temp) - 1] = 0;
 	if (ft_strchr(flags, 'l'))
 	{
 		ft_putnbr(buf->blk);
@@ -52,7 +56,8 @@ void printdirs(t_file *buf, char *flags)
 		ft_putchar(' ');
 		ft_putstr(getgrgid(buf->usr)->gr_name);
 		ft_putchar(' ');
-		ft_putstr(ctime(&(buf->la.tv_sec)));
+		ft_putstr(temp);
+		ft_strdel(&temp);
 		ft_putchar(' ');
 		ft_putnbr(buf->size);
 		ft_putchar(' ');

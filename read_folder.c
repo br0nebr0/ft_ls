@@ -58,6 +58,18 @@ void get_params(t_imp **list, t_ls *rd)
 		ft_impadd(&(*list), ft_impnew(rd, get_pars));
 }
 
+int name_compr(void *lst1, void *lst2)
+{
+	t_file *el1;
+	t_file *el2;
+
+	el1 = (t_file *) lst1;
+	el2 = (t_file *) lst2;
+
+	if (ft_strcmp(el1->name, el2->name) > 0)
+		return (1);
+	return (0);
+}
 /*добавляем слэши в случае их отсутствия*/
 char *changepath(char *path)
 {
@@ -97,6 +109,7 @@ int read_folders(char *path, char *flags)
 	ft_putendl(ft_itoa(sum));
 	while (params)
 	{
+		params = ft_impsort(params, ft_impsize(params), name_compr);
 		printdirs((t_file *) (params->content), flags);
 		ft_impdel(&params, del_pars);
 	}

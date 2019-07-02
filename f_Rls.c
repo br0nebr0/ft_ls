@@ -26,6 +26,7 @@ void delcont(void **cont)
 	ft_memdel(&(*cont));
 }
 
+
 /* получение поддиректорий*/
 void get_dirs(t_imp **folds, t_ls *rd, char *path, char *flags)
 {

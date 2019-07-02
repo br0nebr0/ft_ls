@@ -96,8 +96,6 @@ t_imp			*ft_impnew(void *content, void *(*add)(void *));
 void			ft_impadd(t_imp **imp, t_imp *new);
 t_imp			*ft_impsearch(t_imp *imp, int id);
 size_t			ft_strlento(const char *str, const char c);
-void			ft_putmatrix(char **str);
-int				ft_matrixchrlen(const char **s, int field_size, int c);
-void			ft_matrixfree(char ***ret);
-
+int				ft_impsize(t_imp *lst);
+t_imp			*ft_impsort(t_imp *lst, int cnt, int (*compr)(void *, void *));
 #endif
