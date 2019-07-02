@@ -51,7 +51,7 @@ typedef struct s_file
 	char			*name;
 }				t_file;
 
-int read_folders(char *path, char *flags);
+int read_folders(char **path, char *flags);
 char *get_mode(struct stat file);
 void recursion(t_imp **folds, char *flags);
 char *changepath(char *path);

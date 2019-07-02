@@ -57,13 +57,12 @@ void printdirs(t_file *buf, char *flags)
 		ft_putstr(getgrgid(buf->usr)->gr_name);
 		ft_putchar(' ');
 		ft_putstr(temp);
-		ft_strdel(&temp);
 		ft_putchar(' ');
 		ft_putnbr(buf->size);
 		ft_putchar(' ');
 	}
+	ft_strdel(&temp);
 	ft_putendl(buf->name);
-	
 }
 
 /* Вычисление суммы блоков в зависимости от флагов */

@@ -73,32 +73,41 @@ int name_compr(void *lst1, void *lst2)
 /*добавляем слэши в случае их отсутствия*/
 char *changepath(char *path)
 {
+	char *str;
+
 	if ((ft_strchr(path, '/') + 1) != 0 && !ft_strequ(path, "."))
 		ft_putendl(path);
-	return(((ft_strlen(path)-1) != '/')? ft_strjoin(path, "/") : path);
+	if ((ft_strlen(path)-1) != '/')
+	{
+		str = ft_strjoin(path, "/");
+		ft_strdel(&path);
+	}
+	return(str);
 }
 
 /* Проверка основных флагов и пути */
-int read_folders(char *path, char *flags)
+int read_folders(char **path, char *flags)
 {
 	t_ls *rd;
 	int sum;
 	t_imp *folds;
 	t_imp *params;
+	char	*buf;
 
 	sum = 0;
 	folds = NULL;
 	params = NULL;
 	rd = malloc(sizeof(t_ls));
-	if(!(rd->fld = opendir(path)))
+	if(!(rd->fld = opendir(*path)))
 	 	return (-1);
-	path = changepath(path);
+	*path = changepath(*path);
 	while((rd->entry = readdir(rd->fld)) != NULL)
 	{
-		/* получение параметров файла*/
-		lstat(ft_strjoin(path,rd->entry->d_name), &(rd->buf));
+		buf = ft_strjoin(*path,rd->entry->d_name);
+		lstat(buf, &(rd->buf));
+		ft_strdel(&buf);
 		/* Сбор списка директорий*/
-		get_dirs(&folds, rd, path, flags);
+		get_dirs(&folds, rd, *path, flags);
 		/* Добавление данных о файле*/
 		get_params(&params, rd);
 		sum = calcblock(sum, flags, rd->entry->d_name, rd->buf.st_blocks);
@@ -106,7 +115,9 @@ int read_folders(char *path, char *flags)
 	/* Тут должна быть сортировка*/
 	/* вывод и удаление списка */
 	ft_putstr("total: ");
-	ft_putendl(ft_itoa(sum));
+	buf = ft_itoa(sum);
+	ft_putendl(buf);
+	ft_strdel(&buf);
 	while (params)
 	{
 		params = ft_impsort(params, ft_impsize(params), name_compr);
@@ -116,5 +127,7 @@ int read_folders(char *path, char *flags)
 	if (ft_strchr(flags, 'R'))
 	recursion(&folds, flags);
 	closedir(rd->fld);
+	free (rd);
+	ft_strdel(&(*path));
 	return (0);
 }

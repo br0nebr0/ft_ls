@@ -1,31 +1,57 @@
 #include "ft_ls.h"
 
-char *get_flags(int gc, char **gv)
+void addchar(char **line, char c)
 {
-	char *chk;
 	char *buf;
+
+	if (!*line)
+		buf = ft_strnew(1);
+	else
+		buf = ft_strnew(ft_strlen(*line)+1);
+	buf = ft_strcat(buf, *line);
+	buf[ft_strlen(*line)] = c;
+	if (*line)
+		ft_strdel(&(*line));
+	*line = buf;
+}
+
+void addlines(char **line1, char *line2)
+{
 	int i;
-	int j;
+	char *buf;
 
 	i = 1;
-	chk = ft_strdup("1AaBbCcDdFfGgHhikLlmNnopQqRrSstUuvwXx");
-	buf = ft_strnew(0);
+	buf = NULL;
+	if (line1)
+		buf = ft_strdup(*line1);
+	while (i < (int)ft_strlen(line2))
+	{
+		if (!ft_strchr("1AaBbCcDdFfGgHhikLlmNnopQqRrSstUuvwXx", line2[i]))
+		{
+			addchar(&buf, 'e');
+
+			break;
+		}
+		if (!ft_strchr(buf, line2[i]))
+			addchar(&buf, line2[i]);
+		i++;	
+	}
+	ft_strdel(&(*line1));
+	*line1 = buf;
+}
+
+char *get_flags(int gc, char **gv)
+{
+	char *buf;
+	int i;
+
+	i = 1;
+	buf = NULL;
 	while(i < gc)
 	{
 		if (gv[i][0] == '-')
-		{
-			j = 1;
-			while (j < (int)ft_strlen(gv[i]))
-			{
-				if (!ft_strchr(chk, gv[i][j]))
-				{
-					ft_strdel(&buf);
-					return ("e");
-				}
-				j++;	
-			}
-			buf = ft_strjoin(buf, gv[i]+1);
-		}
+			addlines(&buf, gv[i] + 1);
+		ft_putendl("here1");
 		i++;
 	}
 	return (buf);
@@ -34,6 +60,8 @@ char *get_flags(int gc, char **gv)
 int g_pars(int gc, char **gv, char **path, char **flags)
 {
 
+	*path = NULL;
+	*flags = NULL;
 	if (gc == 1)
 	{
 		*path = ft_strdup(".");
@@ -50,22 +78,27 @@ int g_pars(int gc, char **gv, char **path, char **flags)
 	return (0);
 }
 
-int	main(int gc, const char **gv) 
+int	main(int gc, char **gv) 
 {
 	char	*path;
 	int		test;
 	char	*flags;
 
-	test = g_pars(gc, (char **) gv, &path, &flags);
+	flags = get_flags(gc, gv);
+	//test = g_pars(gc, gv, &path, &flags);
+	ft_putendl(flags);
+	return (0);
 	if (test < 0)
 	{
 		ft_putendl("ERROR!!!!");
+		ft_strdel(&path);
+		ft_strdel(&flags);
 		return (0);
 	}
-	test = read_folders(path, flags);
+	//test = read_folders(&path, flags);
+	ft_strdel(&flags);
+	ft_strdel(&path);
 	if (test == -1)
 		ft_putendl("ERROR!!!!");
-	ft_strdel(&path);
-	ft_strdel(&flags);
 	return(0);
 }

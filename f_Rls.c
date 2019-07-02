@@ -34,7 +34,6 @@ void get_dirs(t_imp **folds, t_ls *rd, char *path, char *flags)
 
 	if (ft_strchr(flags, 'R'))
 	{
-		str = ft_strnew(0);
 		if (S_ISDIR(rd->buf.st_mode) && (ft_strequ(rd->entry->d_name, ".") == 0 &&
 		(ft_strequ(rd->entry->d_name, "..") == 0)))
 		{
@@ -56,7 +55,7 @@ void recursion(t_imp **folds, char *flags)
 		{
 			ft_putendl("");
 			if((char*)(*folds)->content)
-				read_folders((char *)(*folds)->content, flags);
+				read_folders((char **)&(*folds)->content, flags);
 			ft_impdel(&(*folds), delcont);
 		}
 }
