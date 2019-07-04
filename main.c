@@ -1,104 +1,113 @@
 #include "ft_ls.h"
 
-void addchar(char **line, char c)
+/* Добавление директории в список (Дубль из Rls)*/
+void *addpath(void *str)
 {
-	char *buf;
+	char *c;
 
-	if (!*line)
-		buf = ft_strnew(1);
-	else
-		buf = ft_strnew(ft_strlen(*line)+1);
-	buf = ft_strcat(buf, *line);
-	buf[ft_strlen(*line)] = c;
-	if (*line)
-		ft_strdel(&(*line));
-	*line = buf;
+	c = (char *) ft_strdup(str);
+	return (c);
+}
+/* Удаление директории из списка (Дубль из Rls)*/
+void delpath(void **cont)
+{
+	ft_memdel(&(*cont));
 }
 
-void addlines(char **line1, char *line2)
+void get_error(t_imp **lst, char **str, int code)
+{
+	if (code < 0)
+	{
+		if (lst)
+			while (*lst)
+				ft_impdel(&(*lst), delpath);
+		ft_strdel(&(*str));
+		ft_putendl("ERROR!!!");
+	}
+}
+
+/*"@1AaBbCcdFfGgHhikLlmnOoPpqRrSsTtuvWwx"*/
+int ft_addline(char **buf, char *arg)
 {
 	int i;
-	char *buf;
+	int j;
 
-	i = 1;
-	buf = NULL;
-	if (line1)
-		buf = ft_strdup(*line1);
-	while (i < (int)ft_strlen(line2))
+	i = ft_strlen(arg);
+	j = 0;
+	while (j < i)
 	{
-		if (!ft_strchr("1AaBbCcDdFfGgHhikLlmNnopQqRrSstUuvwXx", line2[i]))
+		if (!ft_strchr("@1AaBbCcdFfGgHhikLlmnOoPpqRrSsTtuvWwx", arg[j]))
 		{
-			addchar(&buf, 'e');
-
-			break;
+			ft_strdel(&(*buf));
+			return (0);
 		}
-		if (!ft_strchr(buf, line2[i]))
-			addchar(&buf, line2[i]);
-		i++;	
+		if (!ft_strchr(*buf, arg[j]))
+			*buf = ft_strncat(*buf, arg + j, 1);
+		j++;
 	}
-	ft_strdel(&(*line1));
-	*line1 = buf;
+	return (1);
 }
 
-char *get_flags(int gc, char **gv)
+void ft_addpath(t_imp **path, char *arg)
 {
-	char *buf;
+	if(!*path)
+		*path = ft_impnew(arg, addpath);
+	else
+		ft_impadd(&(*path), ft_impnew(arg, addpath));
+}
+
+int get_args(int gc, char **gv, t_imp **path, char **flags)
+{
 	int i;
 
-	i = 1;
-	buf = NULL;
-	while(i < gc)
-	{
-		if (gv[i][0] == '-')
-			addlines(&buf, gv[i] + 1);
-		ft_putendl("here1");
-		i++;
-	}
-	return (buf);
-}
-
-int g_pars(int gc, char **gv, char **path, char **flags)
-{
-
-	*path = NULL;
-	*flags = NULL;
 	if (gc == 1)
 	{
-		*path = ft_strdup(".");
+		*path = ft_impnew("./", addpath);
 		*flags = ft_strdup("");
-		return (0);
+		return(0);
 	}
-	*flags = get_flags(gc, gv);
-	if (ft_strchr(*flags, 'e'))
-		return (-1);
-	if (gv[gc - 1][0] != '-')
-		*path = ft_strdup(gv[gc - 1]);
-	else
-		*path = ft_strdup(".");
+	i = 1;
+	while(i < gc)
+	{
+		if (gv[i][0] == '-' && *path)
+			return (-1);
+		if (gv[i][0] == '-')
+			if(!ft_addline(&(*flags), gv[i]+1))
+				return (-1);
+		if(gv[i][0] != '-')
+			ft_addpath(&(*path), gv[i]);
+		i++;
+	}
+	*path = (!*path) ? ft_impnew("./", addpath) : *path;
 	return (0);
 }
 
 int	main(int gc, char **gv) 
 {
-	char	*path;
+	t_imp	*path;
 	int		test;
 	char	*flags;
+	char *buf;
 
-	flags = get_flags(gc, gv);
-	//test = g_pars(gc, gv, &path, &flags);
-	ft_putendl(flags);
-	return (0);
+	path = NULL;
+	flags = ft_strnew(37);
+	if((test = get_args(gc, gv, &path, &flags)) < 0)
+	{
+		get_error(&path, &flags, test);
+		exit (0);
+	}
+	while(path && test >= 0)
+	{
+		buf = ft_strdup((char *) path->content);
+		test = read_folders(&buf, flags);
+		ft_strdel(&buf);
+		ft_impdel(&path, delpath);		
+	}
 	if (test < 0)
 	{
-		ft_putendl("ERROR!!!!");
-		ft_strdel(&path);
-		ft_strdel(&flags);
-		return (0);
+		get_error(&path, &flags, test);
+		exit (0);
 	}
-	//test = read_folders(&path, flags);
 	ft_strdel(&flags);
-	ft_strdel(&path);
-	if (test == -1)
-		ft_putendl("ERROR!!!!");
-	return(0);
+	exit(1);
 }
