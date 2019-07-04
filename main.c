@@ -1,26 +1,12 @@
 #include "ft_ls.h"
 
-/* Добавление директории в список (Дубль из Rls)*/
-void *addpath(void *str)
-{
-	char *c;
-
-	c = (char *) ft_strdup(str);
-	return (c);
-}
-/* Удаление директории из списка (Дубль из Rls)*/
-void delpath(void **cont)
-{
-	ft_memdel(&(*cont));
-}
-
 void get_error(t_imp **lst, char **str, int code)
 {
 	if (code < 0)
 	{
 		if (lst)
 			while (*lst)
-				ft_impdel(&(*lst), delpath);
+				ft_impdel(&(*lst), delcont);
 		ft_strdel(&(*str));
 		ft_putendl("ERROR!!!");
 	}
@@ -51,9 +37,9 @@ int ft_addline(char **buf, char *arg)
 void ft_addpath(t_imp **path, char *arg)
 {
 	if(!*path)
-		*path = ft_impnew(arg, addpath);
+		*path = ft_impnew(arg, addcont);
 	else
-		ft_impadd(&(*path), ft_impnew(arg, addpath));
+		ft_impadd(&(*path), ft_impnew(arg, addcont));
 }
 
 int get_args(int gc, char **gv, t_imp **path, char **flags)
@@ -62,7 +48,7 @@ int get_args(int gc, char **gv, t_imp **path, char **flags)
 
 	if (gc == 1)
 	{
-		*path = ft_impnew("./", addpath);
+		*path = ft_impnew("./", addcont);
 		*flags = ft_strdup("");
 		return(0);
 	}
@@ -78,7 +64,7 @@ int get_args(int gc, char **gv, t_imp **path, char **flags)
 			ft_addpath(&(*path), gv[i]);
 		i++;
 	}
-	*path = (!*path) ? ft_impnew("./", addpath) : *path;
+	*path = (!*path) ? ft_impnew("./", addcont) : *path;
 	return (0);
 }
 
@@ -87,7 +73,6 @@ int	main(int gc, char **gv)
 	t_imp	*path;
 	int		test;
 	char	*flags;
-	char *buf;
 
 	path = NULL;
 	flags = ft_strnew(37);
@@ -98,10 +83,8 @@ int	main(int gc, char **gv)
 	}
 	while(path && test >= 0)
 	{
-		buf = ft_strdup((char *) path->content);
-		test = read_folders(&buf, flags);
-		ft_strdel(&buf);
-		ft_impdel(&path, delpath);		
+		test = read_folders((char **) &path->content, flags);
+		ft_impdel(&path, delcont);		
 	}
 	if (test < 0)
 	{

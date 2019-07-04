@@ -51,6 +51,15 @@ typedef struct s_file
 	char			*name;
 }				t_file;
 
+/*List control functions*/
+void *addcont(void *str);
+void delcont(void **cont);
+void *set_params(void *rd);
+void del_pars(void **rd);
+void get_params(t_imp **list, t_ls *rd);
+/*Sort functions*/
+int name_compr(void *lst1, void *lst2);
+/*other funcs*/
 int read_folders(char **path, char *flags);
 char *get_mode(struct stat file);
 void recursion(t_imp **folds, char *flags);

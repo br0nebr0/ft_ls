@@ -12,64 +12,6 @@
 
 #include "ft_ls.h"
 
-/* как обрабатывать время???*/
-/* функция для добавления структуры в данные списка*/
-void *get_pars(void *rd)
-{
-	t_file *content;
-	t_ls *buf;
-
-	buf = (t_ls *) rd;
-	content = malloc(sizeof(t_file));
-	content->mode = get_mode(buf->buf);
-	content->lnk = buf->buf.st_nlink;
-	content->usr = buf->buf.st_uid;
-	content->grp = buf->buf.st_gid;
-	content->la = buf->buf.st_mtim; //3 variants of time?
-	content->size = buf->buf.st_size;
-	content->blk = buf->buf.st_blocks;
-	content->name = ft_strdup(buf->entry->d_name);
-	return ((void *)content);
-}
-
-/* функция для удаления данных из списка*/
-void del_pars(void **rd)
-{
-	t_file *buf;
-
-	if(rd)
-	{
-		if (*rd)
-		{
-			buf = *rd;
-			ft_strdel(&(buf)->mode);
-			ft_strdel(&(buf)->name);
-			ft_memdel((void **)&buf);
-		}
-	}
-}
-
-/* Собираем все данные о файле из папки*/
-void get_params(t_imp **list, t_ls *rd)
-{
-	if(!*list)
-		*list = ft_impnew(rd, get_pars);
-	else
-		ft_impadd(&(*list), ft_impnew(rd, get_pars));
-}
-
-int name_compr(void *lst1, void *lst2)
-{
-	t_file *el1;
-	t_file *el2;
-
-	el1 = (t_file *) lst1;
-	el2 = (t_file *) lst2;
-
-	if (ft_strcmp(el1->name, el2->name) > 0)
-		return (1);
-	return (0);
-}
 /*добавляем слэши в случае их отсутствия*/
 char *changepath(char *path)
 {

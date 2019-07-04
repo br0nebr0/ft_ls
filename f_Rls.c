@@ -12,21 +12,6 @@
 
 #include "ft_ls.h"
 
-/* Добавление директории в список*/
-void *addcont(void *str)
-{
-	char *c;
-
-	c = (char *) ft_strdup(str);
-	return (c);
-}
-/* Удаление директории из списка*/
-void delcont(void **cont)
-{
-	ft_memdel(&(*cont));
-}
-
-
 /* получение поддиректорий*/
 void get_dirs(t_imp **folds, t_ls *rd, char *path, char *flags)
 {
