@@ -83,6 +83,7 @@ int	main(int gc, char **gv)
 	}
 	while(path && test >= 0)
 	{
+		path = (!ft_strchr(flags, 'f')) ? ft_impsort(path, ft_impsz(path), s_nm): path;
 		test = read_folders((char **) &path->content, flags);
 		ft_impdel(&path, delcont);		
 	}

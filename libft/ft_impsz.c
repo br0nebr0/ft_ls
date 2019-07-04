@@ -1,6 +1,6 @@
 #include "libft.h"
 
-int ft_impsize(t_imp *lst)
+int ft_impsz(t_imp *lst)
 {
 	int		i;
 	t_imp	*buf;

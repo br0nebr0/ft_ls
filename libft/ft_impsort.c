@@ -6,7 +6,7 @@ static void splitlist(t_imp *source, t_imp **lst1, t_imp **lst2)
 	int j;
 
 	i = 0;
-	j = ft_impsize(source);
+	j = ft_impsz(source);
 	*lst2 = source;
 	while (i < j / 2)
 	{
@@ -87,8 +87,8 @@ t_imp *ft_impsort(t_imp *lst, int cnt,int (*compr)(void *, void *))
 		return(n_lst);
 	}
 	splitlist(lst, &l_lst, &r_lst);
-	l_lst = ft_impsort(l_lst, ft_impsize(l_lst), compr);
-	r_lst = ft_impsort(r_lst, ft_impsize(r_lst), compr);
+	l_lst = ft_impsort(l_lst, ft_impsz(l_lst), compr);
+	r_lst = ft_impsort(r_lst, ft_impsz(r_lst), compr);
 	n_lst = mergelist(l_lst, r_lst, compr);
 	return (n_lst);
 }

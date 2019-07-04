@@ -45,7 +45,9 @@ typedef struct s_file
 	int				lnk;
 	uid_t			usr;
 	gid_t			grp;
-	struct timespec	la;
+	struct timespec	la; /*last access*/
+	struct timespec	lm; /*last modification*/
+	struct timespec	ls; /*last status*/
 	int				blk;
 	int				size;
 	char			*name;
@@ -58,7 +60,11 @@ void *set_params(void *rd);
 void del_pars(void **rd);
 void get_params(t_imp **list, t_ls *rd);
 /*Sort functions*/
-int name_compr(void *lst1, void *lst2);
+int s_name(void *lst1, void *lst2);
+int s_nm(void *str1, void *str2);
+int s_ls(void *lst1, void *lst2);
+int s_la(void *lst1, void *lst2);
+int s_lm(void *lst1, void *lst2);
 /*other funcs*/
 int read_folders(char **path, char *flags);
 char *get_mode(struct stat file);

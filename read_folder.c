@@ -62,7 +62,7 @@ int read_folders(char **path, char *flags)
 	ft_strdel(&buf);
 	while (params)
 	{
-		params = ft_impsort(params, ft_impsize(params), name_compr);
+		params = ft_impsort(params, ft_impsz(params), s_lm);
 		printdirs((t_file *) (params->content), flags);
 		ft_impdel(&params, del_pars);
 	}

@@ -25,7 +25,9 @@ void *set_params(void *rd)
 	content->lnk = buf->buf.st_nlink;
 	content->usr = buf->buf.st_uid;
 	content->grp = buf->buf.st_gid;
-	content->la = buf->buf.st_mtim; //3 variants of time?
+	content->la = buf->buf.st_atim;
+	content->lm = buf->buf.st_mtim;
+	content->ls = buf->buf.st_ctim;
 	content->size = buf->buf.st_size;
 	content->blk = buf->buf.st_blocks;
 	content->name = ft_strdup(buf->entry->d_name);
