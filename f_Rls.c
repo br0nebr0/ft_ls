@@ -24,23 +24,21 @@ void get_dirs(t_imp **folds, t_ls *rd, char *path, char *flags)
 		{
 			str = ft_strjoin(path, rd->entry->d_name);
 			 if (!*folds)
-				*folds = ft_impnew(str, addcont);
+				*folds = ft_impnew(str, addir);
 			 else
-				ft_impadd(&(*folds), ft_impnew(str, addcont));
+				ft_impadd(&(*folds), ft_impnew(str, addir));
 			ft_strdel(&str);
 		}
 	}
 }
-/* Перед следующей функцией сортировка*/
-/* Обход поддиректорий и удаление пройденых */
 void recursion(t_imp **folds, char *flags)
 {
 	if (ft_strchr(flags, 'R'))
 		while(*folds)
 		{
 			ft_putendl("");
-			if((char*)(*folds)->content)
-				read_folders((char **)&(*folds)->content, flags);
-			ft_impdel(&(*folds), delcont);
+			if(((t_path *)(*folds)->content)->path)
+				read_folders(&((t_path *)(*folds)->content)->path, flags);
+			ft_impdel(&(*folds), deldir);
 		}
 }

@@ -50,15 +50,28 @@ int s_lm(void *lst1, void *lst2)
 	return (0);
 }
 
+int s_pt(void *str1, void *str2)
+{
+	t_path *el1;
+	t_path *el2;
+
+	el1 = (t_path *) str1;
+	el2 = (t_path *) str2;
+
+	if (ft_strcmp(el1->path, el2->path) > 0)
+		return (1);
+	return (0);
+}
+
 int s_nm(void *str1, void *str2)
 {
-	char *el1;
-	char *el2;
+	t_path *el1;
+	t_path *el2;
 
-	el1 = (char *) str1;
-	el2 = (char *) str2;
+	el1 = (t_path *) str1;
+	el2 = (t_path *) str2;
 
-	if (ft_strcmp(el1, el2) > 0)
+	if (ft_strcmp(el1->path, el2->path) > 0)
 		return (1);
 	return (0);
 }

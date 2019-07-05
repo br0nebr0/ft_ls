@@ -6,7 +6,7 @@ void get_error(t_imp **lst, char **str, int code)
 	{
 		if (lst)
 			while (*lst)
-				ft_impdel(&(*lst), delcont);
+				ft_impdel(&(*lst), deldir);
 		ft_strdel(&(*str));
 		ft_putendl("ERROR!!!");
 	}
@@ -37,9 +37,9 @@ int ft_addline(char **buf, char *arg)
 void ft_addpath(t_imp **path, char *arg)
 {
 	if(!*path)
-		*path = ft_impnew(arg, addcont);
+		*path = ft_impnew(arg, addir);
 	else
-		ft_impadd(&(*path), ft_impnew(arg, addcont));
+		ft_impadd(&(*path), ft_impnew(arg, addir));
 }
 
 int get_args(int gc, char **gv, t_imp **path, char **flags)
@@ -48,7 +48,7 @@ int get_args(int gc, char **gv, t_imp **path, char **flags)
 
 	if (gc == 1)
 	{
-		*path = ft_impnew("./", addcont);
+		*path = ft_impnew(".", addir);
 		*flags = ft_strdup("");
 		return(0);
 	}
@@ -64,8 +64,20 @@ int get_args(int gc, char **gv, t_imp **path, char **flags)
 			ft_addpath(&(*path), gv[i]);
 		i++;
 	}
-	*path = (!*path) ? ft_impnew("./", addcont) : *path;
+	*path = (!*path) ? ft_impnew(".", addir) : *path;
 	return (0);
+}
+
+char *get_path(void *lst)
+{
+	t_path *buf;
+	char *str;
+
+	buf = (t_path *) lst;
+	str = ft_strdup(buf->path);
+	buf = NULL;
+	return (str);
+
 }
 
 int	main(int gc, char **gv) 
@@ -73,6 +85,7 @@ int	main(int gc, char **gv)
 	t_imp	*path;
 	int		test;
 	char	*flags;
+	char *buf;
 
 	path = NULL;
 	flags = ft_strnew(37);
@@ -81,11 +94,13 @@ int	main(int gc, char **gv)
 		get_error(&path, &flags, test);
 		exit (0);
 	}
+	path = (!ft_strchr(flags, 'f')) ? ft_impsort(path, ft_impsz(path), s_pt): path;
 	while(path && test >= 0)
 	{
-		path = (!ft_strchr(flags, 'f')) ? ft_impsort(path, ft_impsz(path), s_nm): path;
-		test = read_folders((char **) &path->content, flags);
-		ft_impdel(&path, delcont);		
+		buf = get_path(path->content);
+		test = read_folders(&buf, flags);
+		ft_impdel(&path, deldir);
+		ft_strdel(&buf);		
 	}
 	if (test < 0)
 	{

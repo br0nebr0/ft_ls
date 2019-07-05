@@ -1,17 +1,23 @@
 #include "ft_ls.h"
 
 /*Добавление директории в список*/
-void *addcont(void *str)
+void *addir(void *str)
 {
-	char *c;
+	t_path *lst;
 
-	c = (char *) ft_strdup(str);
-	return (c);
+	lst = (t_path *)malloc(sizeof(t_path));
+	lst->path = ft_strdup((char *) str);
+	lstat(lst->path, &(lst->stat));
+	return (lst);
 }
 /* Удаление директории из списка*/
-void delcont(void **cont)
+void deldir(void **cont)
 {
-	ft_memdel(&(*cont));
+	t_path *buf;
+
+	buf = (t_path *) *cont;
+	ft_strdel(&(buf->path));
+	ft_memdel((void **)&(*cont));
 }
 /* функция для добавления структуры в данные списка*/
 void *set_params(void *rd)

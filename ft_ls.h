@@ -35,6 +35,11 @@ typedef struct s_ls
 	struct stat		buf;
 } 				t_ls;
 
+typedef struct s_path
+{
+	char	*path;
+	struct stat stat;
+}				t_path;
 /* mod: acesss&typefile; lnk:links_count;
 usr:user_id; grp: group_id; tm: contain 3 dif. time val;
 blk:  blocks_count; name: filename;
@@ -54,17 +59,18 @@ typedef struct s_file
 }				t_file;
 
 /*List control functions*/
-void *addcont(void *str);
-void delcont(void **cont);
+void *addir(void *str);
+void deldir(void **cont);
 void *set_params(void *rd);
 void del_pars(void **rd);
 void get_params(t_imp **list, t_ls *rd);
 /*Sort functions*/
 int s_name(void *lst1, void *lst2);
-int s_nm(void *str1, void *str2);
+int s_pt(void *str1, void *str2);
 int s_ls(void *lst1, void *lst2);
 int s_la(void *lst1, void *lst2);
 int s_lm(void *lst1, void *lst2);
+int s_nm(void *str1, void *str2);
 /*other funcs*/
 int read_folders(char **path, char *flags);
 char *get_mode(struct stat file);
