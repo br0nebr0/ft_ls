@@ -50,6 +50,18 @@ int s_lm(void *lst1, void *lst2)
 	return (0);
 }
 
+int s_sz(void *lst1, void *lst2)
+{
+	t_file *el1;
+	t_file *el2;
+
+	el1 = (t_file *) lst1;
+	el2 = (t_file *) lst2;
+	if (el2->size - el1->size > 0)
+		return (1);
+	return (0);
+}
+
 int s_pt(void *str1, void *str2)
 {
 	t_path *el1;

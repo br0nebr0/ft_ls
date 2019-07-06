@@ -54,7 +54,7 @@ typedef struct s_file
 	struct timespec	lm; /*last modification*/
 	struct timespec	ls; /*last status*/
 	int				blk;
-	int				size;
+	long long int	size;
 	char			*name;
 }				t_file;
 
@@ -79,5 +79,5 @@ char *changepath(char *path);
 void printbuf(char *buffer, int sum, char *flags);
 void get_dirs(t_imp **folds, t_ls *rd, char *path, char *flags);
 int calcblock(int sum, char *flags, char *name, int size);
-void printdirs(t_file *buf, char *flags);
+void printdirs(t_file *buf, char *flags, int *size);
 #endif

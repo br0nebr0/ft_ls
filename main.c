@@ -86,7 +86,7 @@ int	main(int gc, char **gv)
 	int		test;
 	char	*flags;
 	char *buf;
-
+	
 	path = NULL;
 	flags = ft_strnew(37);
 	if((test = get_args(gc, gv, &path, &flags)) < 0)

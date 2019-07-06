@@ -36,9 +36,31 @@ char *get_mode(struct stat file)
 	mode[9] = (file.st_mode & S_IXOTH) ? 'x' : '-';
 	return (mode);
 }
+void printwspaces(int sz)
+{
+	int i;
 
+	i = 0;
+	while (i < sz)
+	{
+		ft_putchar(' ');
+		i++;
+	}
+}
+
+void printword(char *str)
+{
+	ft_putstr(str);
+	ft_putchar(' ');
+}
+
+void printnum(int nbr)
+{
+	ft_putnbr(nbr);
+	ft_putchar(' ');
+}
 /* выводим все что прочли*/
-void printdirs(t_file *buf, char *flags)
+void printdirs(t_file *buf, char *flags, int *size)
 {
 	char *temp;
 
@@ -46,20 +68,21 @@ void printdirs(t_file *buf, char *flags)
 	temp[ft_strlen(temp) - 1] = 0;
 	if (ft_strchr(flags, 'l'))
 	{
-		ft_putnbr(buf->blk);
-		ft_putchar(' ');
-		ft_putstr(buf->mode);
-		ft_putchar(' ');
-		ft_putnbr(buf->lnk);
-		ft_putchar(' ');
-		ft_putstr(getpwuid(buf->usr)->pw_name);
-		ft_putchar(' ');
-		ft_putstr(getgrgid(buf->usr)->gr_name);
-		ft_putchar(' ');
-		ft_putstr(temp);
-		ft_putchar(' ');
-		ft_putnbr(buf->size);
-		ft_putchar(' ');
+		if (ft_strchr(flags, 'k'))
+		{
+			printwspaces(size[0] - (int) ft_strlen(ft_itoa(buf->blk)));
+			printnum(buf->blk);
+		}
+		printword(buf->mode);
+		printwspaces(size[1] - ft_strlen(ft_itoa(buf->lnk)));
+		printnum(buf->lnk);
+		printwspaces(size[2] - ft_strlen(getpwuid(buf->usr)->pw_name));
+		printword(getpwuid(buf->usr)->pw_name);
+		printwspaces(size[3] - ft_strlen(getgrgid(buf->usr)->gr_name));
+		printword(getgrgid(buf->usr)->gr_name);
+		printword(temp);
+		printwspaces(size[4] - ft_strlen(ft_itoa(buf->size)));
+		printnum(buf->size);
 	}
 	ft_strdel(&temp);
 	ft_putendl(buf->name);

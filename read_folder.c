@@ -18,7 +18,10 @@ char *changepath(char *path)
 	char *str;
 
 	if ((ft_strchr(path, '/') + 1) != 0 && !ft_strequ(path, "."))
-		ft_putendl(path);
+	{
+		ft_putstr(path);
+		ft_putendl(":");
+	}
 	if ((path[ft_strlen(path)-1]) != '/')
 	{
 		str = ft_strjoin(path, "/");
@@ -44,28 +47,75 @@ int find(char *str1, char *str2)
 	return (0);
 }
 
+void sort_by_flags(t_imp **list, char *flags)
+{
+	if (!ft_strchr(flags, 'f'))
+		*list = ft_impsort(*list, ft_impsz(*list), s_name);
+	if (ft_strchr(flags, 'c') && !find(flags, ""))
+		*list = ft_impsort(*list, ft_impsz(*list), s_ls);
+	if (ft_strchr(flags, 't'))
+		*list = ft_impsort(*list, ft_impsz(*list), s_lm);
+	if (ft_strchr(flags, 'S'))
+		*list = ft_impsort(*list, ft_impsz(*list), s_la);
+}
+
+int *get_sizes(t_imp *list, char *flags)
+{
+	int *size;
+	t_file *stat;
+
+	size = (int *)malloc(sizeof(int) * 5);
+	size[0] = 0;
+	size[1] = 0;
+	size[2] = 0;
+	size[3] = 0;
+	size[4] = 0;
+	while (list)
+	{
+		stat = (t_file *) list->content;
+		if( ft_strchr(flags, 'k') && (int) ft_strlen(ft_itoa(stat->blk)) > size[0])
+			size[0] = ft_strlen(ft_itoa(stat->blk));
+		if(ft_strchr(flags, 's') && (int) ft_strlen(ft_itoa(stat->blk / 2)) > size[0])
+			size[0] = ft_strlen(ft_itoa(stat->blk));
+		if((int) ft_strlen(ft_itoa(stat->lnk)) > size[1])
+			size[1] = ft_strlen(ft_itoa(stat->lnk));
+		if(ft_strchr(flags, 'n') && (int) ft_strlen(ft_itoa(getpwuid(stat->usr)->pw_uid)) > size[2])
+			size[2] = ft_strlen(ft_itoa(getpwuid(stat->usr)->pw_uid));
+		if(!ft_strchr(flags, 'n') && (int) ft_strlen(getpwuid(stat->usr)->pw_name) > size[2])
+			size[2] = ft_strlen(getpwuid(stat->usr)->pw_name);
+		if(ft_strchr(flags, 'n') && (int) ft_strlen(ft_itoa(getgrgid(stat->usr)->gr_gid)) > size[3])
+			size[3] = ft_strlen(ft_itoa(getgrgid(stat->usr)->gr_gid));
+		if(!ft_strchr(flags, 'n') && (int) ft_strlen(getgrgid(stat->usr)->gr_name) > size[3])
+			size[3] = ft_strlen(getgrgid(stat->usr)->gr_name);
+		if(!ft_strchr(flags, 'n') && (int) ft_strlen(getgrgid(stat->usr)->gr_name) > size[3])
+			size[3] = ft_strlen(getgrgid(stat->usr)->gr_name);
+		if((int) ft_strlen(ft_itoa(stat->size)) > size[4])
+			size[4] = ft_strlen(ft_itoa(stat->size));			
+		list = list->next;
+	}
+	return (size);
+}
+
 void output(t_imp **params, char *flags, int sum)
 {
 	t_imp *lst;
+	int		*size;
 
 	lst = *params;
-	if (find(flags, "l"))
+	if (find(flags, "longOks"))
 	{
+	size = get_sizes(lst, flags);
 	ft_putstr("total: ");
-	ft_putnbr(sum);
+		if (ft_strchr(flags, 's'))
+			ft_putnbr(sum / 2);
+		else
+			ft_putnbr(sum);
 	ft_putchar('\n');
 	}
-	if (!ft_strchr(flags, 'f'))
-		lst = ft_impsort(lst, ft_impsz(lst), s_name);
-	if (ft_strchr(flags, 'c'))
-		lst = ft_impsort(lst, ft_impsz(lst), s_ls);
-	if (ft_strchr(flags, 't'))
-		lst = ft_impsort(lst, ft_impsz(lst), s_lm);
-	if (ft_strchr(flags, 'w'))
-		lst = ft_impsort(lst, ft_impsz(lst), s_la);
+	sort_by_flags(&lst, flags);
 	while (lst)
 	{
-		printdirs((t_file *) (lst->content), flags);
+		printdirs((t_file *) (lst->content), flags, size);
 		ft_impdel(&lst, del_pars);
 	}
 }
@@ -81,7 +131,7 @@ int read_folders(char **path, char *flags)
 	sum = 0;
 	folds = NULL;
 	params = NULL;
-	rd = (t_ls *) malloc(sizeof(t_ls)); /*ERROR*/
+	rd = (t_ls *) malloc(sizeof(t_ls));
 	if(!(rd->fld = opendir(*path)))
 	{
 		free (rd);
@@ -102,7 +152,7 @@ int read_folders(char **path, char *flags)
 	output(&params, flags, sum);
 	folds = (!ft_strchr(flags, 'f')) ? ft_impsort(folds, ft_impsz(folds), s_nm): folds;
 	if (ft_strchr(flags, 'R'))
-	recursion(&folds, flags); /*ERROR*/
+	recursion(&folds, flags);
 	ft_strdel(&(*path));
 	return (0);
 }
