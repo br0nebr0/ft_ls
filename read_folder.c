@@ -100,6 +100,7 @@ void output(t_imp **params, char *flags, int sum)
 {
 	t_imp *lst;
 	int		*size;
+	t_file	*buf;
 
 	lst = *params;
 	if (find(flags, "longOks"))
@@ -115,7 +116,16 @@ void output(t_imp **params, char *flags, int sum)
 	sort_by_flags(&lst, flags);
 	while (lst)
 	{
-		printdirs((t_file *) (lst->content), flags, size);
+		buf = (t_file *) (lst->content);
+		if(ft_strchr(flags, 'a'))
+			printdirs(buf, flags, size);
+		else 
+		{
+			if (ft_strchr(flags, 'A') && (!ft_strequ(buf->name, "..") && !ft_strequ(buf->name, ".")))
+			printdirs(buf, flags, size);
+		else if ((buf->name)[0]!= '.')
+			printdirs(buf, flags, size);
+		}
 		ft_impdel(&lst, del_pars);
 	}
 }
