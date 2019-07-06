@@ -19,7 +19,7 @@ HEADER = -c -I ft_ls.h
 all: $(NAME)
 
 $(OBJ): %.o: %.c
-		@gcc -g -c  -I./libft/includes $< -o $@
+		@gcc -g -c -Wall -Wextra -Werror -I./libft/includes $< -o $@
 
 $(LIBFT):
 	@make -C libft

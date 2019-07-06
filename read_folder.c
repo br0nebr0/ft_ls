@@ -63,6 +63,7 @@ int *get_sizes(t_imp *list, char *flags)
 {
 	int *size;
 	t_file *stat;
+	char *buf;
 
 	size = (int *)malloc(sizeof(int) * 5);
 	size[0] = 0;
@@ -73,14 +74,22 @@ int *get_sizes(t_imp *list, char *flags)
 	while (list)
 	{
 		stat = (t_file *) list->content;
-		if( ft_strchr(flags, 'k') && (int) ft_strlen(ft_itoa(stat->blk)) > size[0])
-			size[0] = ft_strlen(ft_itoa(stat->blk));
-		if(ft_strchr(flags, 's') && (int) ft_strlen(ft_itoa(stat->blk / 2)) > size[0])
-			size[0] = ft_strlen(ft_itoa(stat->blk));
-		if((int) ft_strlen(ft_itoa(stat->lnk)) > size[1])
-			size[1] = ft_strlen(ft_itoa(stat->lnk));
-		if(ft_strchr(flags, 'n') && (int) ft_strlen(ft_itoa(getpwuid(stat->usr)->pw_uid)) > size[2])
-			size[2] = ft_strlen(ft_itoa(getpwuid(stat->usr)->pw_uid));
+		buf = ft_itoa(stat->blk);
+		if( ft_strchr(flags, 'k') && (int) ft_strlen(buf) > size[0])
+			size[0] = ft_strlen(buf);
+		ft_strdel(&buf);
+		buf = ft_itoa(stat->blk / 2);
+		if(ft_strchr(flags, 's') && (int) ft_strlen(buf) > size[0])
+			size[0] = ft_strlen(buf);
+		ft_strdel(&buf);
+		buf = ft_itoa(stat->lnk);
+		if((int) ft_strlen(buf) > size[1])
+			size[1] = ft_strlen(buf);
+		ft_strdel(&buf);
+		buf = ft_itoa(getpwuid(stat->usr)->pw_uid);
+		if(ft_strchr(flags, 'n') && (int) ft_strlen(buf) > size[2])
+			size[2] = ft_strlen(buf);
+		ft_strdel(&buf);
 		if(!ft_strchr(flags, 'n') && (int) ft_strlen(getpwuid(stat->usr)->pw_name) > size[2])
 			size[2] = ft_strlen(getpwuid(stat->usr)->pw_name);
 		if(ft_strchr(flags, 'n') && (int) ft_strlen(ft_itoa(getgrgid(stat->usr)->gr_gid)) > size[3])
@@ -89,8 +98,10 @@ int *get_sizes(t_imp *list, char *flags)
 			size[3] = ft_strlen(getgrgid(stat->usr)->gr_name);
 		if(!ft_strchr(flags, 'n') && (int) ft_strlen(getgrgid(stat->usr)->gr_name) > size[3])
 			size[3] = ft_strlen(getgrgid(stat->usr)->gr_name);
-		if((int) ft_strlen(ft_itoa(stat->size)) > size[4])
-			size[4] = ft_strlen(ft_itoa(stat->size));			
+		buf = ft_itoa(stat->size);
+		if((int) ft_strlen(buf) > size[4])
+			size[4] = ft_strlen(buf);
+		ft_strdel(&buf);			
 		list = list->next;
 	}
 	return (size);
@@ -128,6 +139,7 @@ void output(t_imp **params, char *flags, int sum)
 		}
 		ft_impdel(&lst, del_pars);
 	}
+	free(size);
 }
 /* Проверка основных флагов и пути */
 int read_folders(char **path, char *flags)

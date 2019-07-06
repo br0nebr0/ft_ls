@@ -63,6 +63,7 @@ void printnum(int nbr)
 void printdirs(t_file *buf, char *flags, int *size)
 {
 	char *temp;
+	char	*bff;
 
 	temp = ft_strdup(ctime(&(buf->la.tv_sec)));
 	temp[ft_strlen(temp) - 1] = 0;
@@ -70,18 +71,24 @@ void printdirs(t_file *buf, char *flags, int *size)
 	{
 		if (ft_strchr(flags, 'k'))
 		{
-			printwspaces(size[0] - (int) ft_strlen(ft_itoa(buf->blk)));
+			bff = ft_itoa(buf->blk);
+			printwspaces(size[0] - (int) ft_strlen(bff));
 			printnum(buf->blk);
+			ft_strdel(&bff);
 		}
 		printword(buf->mode);
-		printwspaces(size[1] - ft_strlen(ft_itoa(buf->lnk)));
+		bff = ft_itoa(buf->lnk);
+		printwspaces(size[1] - ft_strlen(bff));
 		printnum(buf->lnk);
+		ft_strdel(&bff);
 		printwspaces(size[2] - ft_strlen(getpwuid(buf->usr)->pw_name));
 		printword(getpwuid(buf->usr)->pw_name);
 		printwspaces(size[3] - ft_strlen(getgrgid(buf->usr)->gr_name));
 		printword(getgrgid(buf->usr)->gr_name);
 		printword(temp);
-		printwspaces(size[4] - ft_strlen(ft_itoa(buf->size)));
+		bff = ft_itoa(buf->size);
+		printwspaces(size[4] - ft_strlen(bff));
+		ft_strdel(&bff);
 		printnum(buf->size);
 	}
 	ft_strdel(&temp);
