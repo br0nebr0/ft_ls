@@ -36,106 +36,57 @@ char *get_mode(struct stat file)
 	mode[9] = (file.st_mode & S_IXOTH) ? 'x' : '-';
 	return (mode);
 }
-void printwspaces(int sz)
-{
-	int i;
 
-	i = 0;
-	while (i < sz)
+void printgroups(t_file *buf, char *flags, int *size)
+{
+	char *bff;
+
+	bff = (ft_strchr(flags, 'n')) ? ft_itoa(getpwuid(buf->usr)->pw_uid) :
+		ft_strdup(getpwuid(buf->usr)->pw_name);
+		printwspaces(size[2] - ft_strlen(bff));
+		printword(bff);
+		ft_strdel(&bff);
+	if(!ft_strchr(flags, 'o'))
 	{
-		ft_putchar(' ');
-		i++;
+		bff = (ft_strchr(flags, 'n')) ? ft_itoa(getgrgid(buf->usr)->gr_gid) :
+		ft_strdup(getgrgid(buf->usr)->gr_name);
+		printwspaces(size[2] - ft_strlen(bff));
+		printword(bff);
+		ft_strdel(&bff);
 	}
 }
 
-void printword(char *str)
+void printlong(t_file *buf, char *flags, int *size, char *time)
 {
-	ft_putstr(str);
-	ft_putchar(' ');
-}
+	char *bff;
 
-void printnum(int nbr)
-{
-	ft_putnbr(nbr);
-	ft_putchar(' ');
-}
-
-void cut_time(char *tm, int mode)
-{
-	if (mode == 1)
-		ft_strclr(tm + ft_strlen(tm) - 9);
-	if (mode == 2)
+	if (ft_strchr(flags, 'k'))
 	{
-		ft_memmove(tm + ft_strlen(tm) - 13,  (const char *) tm + ft_strlen(tm) - 5, 4);
-		tm[ft_strlen(tm) - 14] = ' ';
-		ft_strclr(tm + ft_strlen(tm) - 9);
+		bff = ft_itoa(buf->blk);
+		printwspaces(size[0] - (int) ft_strlen(bff));
+		printnum(buf->blk);
+		ft_strdel(&bff);
 	}
-}
-
-char *get_time(t_file *buf, char *flags)
-{
-	char *tm;
-
-
-	
-	if (ft_strchr(flags, 'c'))
-	{
-		tm = ft_strdup(ctime(&(buf->ls.tv_sec)) + 4);
-		if (time(NULL) - buf->ls.tv_sec > 31556926)
-			cut_time(tm, 2);
-		else
-			cut_time(tm, 1);
-		return (tm);
-	}
-	if (ft_strchr(flags, 'w'))
-	{
-		tm = ft_strdup(ctime(&(buf->la.tv_sec)) + 4);
-		if (time(NULL) - buf->la.tv_sec > 31556926)
-			cut_time(tm, 2);
-		else
-			cut_time(tm, 1);
-		return (tm);
-		
-	}
-	tm = ft_strdup(ctime(&(buf->lm.tv_sec)) + 4);
-	if (time(NULL) - buf->lm.tv_sec > 31556926)
-			cut_time(tm, 2);
-		else
-			cut_time(tm, 1);
-		return (tm);
+	printword(buf->mode);
+	bff = ft_itoa(buf->lnk);
+	printwspaces(size[1] - ft_strlen(bff));
+	printnum(buf->lnk);
+	ft_strdel(&bff);
+	printgroups(buf, flags, size);
+	printword(time);
+	bff = ft_itoa(buf->size);
+	printwspaces(size[4] - ft_strlen(bff));
+	ft_strdel(&bff);
+	printnum(buf->size);
 }
 /* выводим все что прочли*/
 void printdirs(t_file *buf, char *flags, int *size)
 {
 	char *time;
-	char	*bff;
 
 	time = get_time(buf, flags);
-	//temp[ft_strlen(temp) - 1] = 0;
 	if (ft_strchr(flags, 'l'))
-	{
-		if (ft_strchr(flags, 'k'))
-		{
-			bff = ft_itoa(buf->blk);
-			printwspaces(size[0] - (int) ft_strlen(bff));
-			printnum(buf->blk);
-			ft_strdel(&bff);
-		}
-		printword(buf->mode);
-		bff = ft_itoa(buf->lnk);
-		printwspaces(size[1] - ft_strlen(bff));
-		printnum(buf->lnk);
-		ft_strdel(&bff);
-		printwspaces(size[2] - ft_strlen(getpwuid(buf->usr)->pw_name));
-		printword(getpwuid(buf->usr)->pw_name);
-		printwspaces(size[3] - ft_strlen(getgrgid(buf->usr)->gr_name));
-		printword(getgrgid(buf->usr)->gr_name);
-		printword(time);
-		bff = ft_itoa(buf->size);
-		printwspaces(size[4] - ft_strlen(bff));
-		ft_strdel(&bff);
-		printnum(buf->size);
-	}
+		printlong(buf, flags, size, time);	
 	ft_strdel(&time);
 	ft_putendl(buf->name);
 }

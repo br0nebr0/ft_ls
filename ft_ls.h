@@ -68,6 +68,16 @@ int s_ls(void *lst1, void *lst2);
 int s_la(void *lst1, void *lst2);
 int s_lm(void *lst1, void *lst2);
 int s_nm(void *str1, void *str2);
+/*input funcs*/
+int get_args(int gc, char **gv, t_imp **path, char **flags);
+void output(t_imp **params, char *flags, int sum);
+/*sub funcs*/
+int find(char *str1, char *str2);
+void sort_by_flags(t_imp **list, char *flags);
+void printwspaces(int sz);
+void printword(char *str);
+void printnum(int nbr);
+char *get_time(t_file *buf, char *flags);
 /*other funcs*/
 int read_folders(char **path, char *flags);
 char *get_mode(struct stat file);
