@@ -40,10 +40,7 @@ typedef struct s_path
 	char	*path;
 	struct stat stat;
 }				t_path;
-/* mod: acesss&typefile; lnk:links_count;
-usr:user_id; grp: group_id; tm: contain 3 dif. time val;
-blk:  blocks_count; name: filename;
-*/
+
 typedef struct s_file
 {
 	char			*mode;
@@ -51,7 +48,7 @@ typedef struct s_file
 	uid_t			usr;
 	gid_t			grp;
 	struct timespec	la; /*last access*/
-	struct timespec	lm; /*last modification*/
+	struct timespec	lm; /*last modified*/
 	struct timespec	ls; /*last status*/
 	int				blk;
 	long long int	size;

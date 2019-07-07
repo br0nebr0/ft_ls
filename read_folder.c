@@ -47,6 +47,25 @@ int find(char *str1, char *str2)
 	return (0);
 }
 
+t_imp *rev_list(t_imp *list)
+{
+	t_imp *prev;
+	t_imp *cur;
+	t_imp *next;
+
+	cur = list;
+	prev = NULL;
+	while (cur)
+	{
+		next = cur->next;
+		cur->next = prev;
+		prev = cur;
+		cur = next; 
+	}
+	return (prev);
+}
+
+
 void sort_by_flags(t_imp **list, char *flags)
 {
 	if (!ft_strchr(flags, 'f'))
@@ -57,6 +76,9 @@ void sort_by_flags(t_imp **list, char *flags)
 		*list = ft_impsort(*list, ft_impsz(*list), s_lm);
 	if (ft_strchr(flags, 'S'))
 		*list = ft_impsort(*list, ft_impsz(*list), s_la);
+	if (ft_strchr(flags, 'r'))
+		*list = rev_list(*list);
+
 }
 
 int *get_sizes(t_imp *list, char *flags)
@@ -139,7 +161,8 @@ void output(t_imp **params, char *flags, int sum)
 		}
 		ft_impdel(&lst, del_pars);
 	}
-	free(size);
+	if (find(flags, "longOks"))
+		free(size);
 }
 /* Проверка основных флагов и пути */
 int read_folders(char **path, char *flags)
