@@ -106,9 +106,16 @@ void color_out(char *mode)
 			ft_putstr(f_pipe);
 		if(mode[0] == 'l')
 			ft_putstr(f_slink);
+		if(ft_strchr(mode, 'x'))
+		{
+			if (mode[6] == 'x')
+				ft_putstr(f_exuid);			
+			else if (mode[3] == 'x')
+				ft_putstr(f_exgid);
+			else
+				ft_putstr(f_exec);
+		}
 	}
-
-
 }
 void printdirs(t_file *buf, char *flags, int *size)
 {
