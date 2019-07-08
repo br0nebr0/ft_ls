@@ -34,7 +34,7 @@ void printwspaces(int sz)
 {
 	int i;
 
-	i = 1;
+	i = 0;
 	while (i < sz)
 	{
 		ft_putchar(' ');

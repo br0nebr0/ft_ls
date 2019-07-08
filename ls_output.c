@@ -80,6 +80,36 @@ void printlong(t_file *buf, char *flags, int *size, char *time)
 	printnum(buf->size);
 }
 /* выводим все что прочли*/
+void color_out(char *mode)
+{
+	if(mode[0] == 'd')
+	{
+		if (mode[7] == 'w')
+		{
+			if(mode[9] == 't')
+				ft_putstr(f_wrst);
+			else
+				ft_putstr(f_wrnst);
+		}
+		else
+			ft_putstr(f_dir);
+	}
+	else
+	{
+		if(mode[0] == 'b')
+			ft_putstr(f_blsp);
+		if(mode[0] == 'c')
+			ft_putstr(f_chsp);
+		if(mode[0] == 's')
+			ft_putstr(f_sock);
+		if(mode[0] == 'p')
+			ft_putstr(f_pipe);
+		if(mode[0] == 'l')
+			ft_putstr(f_slink);
+	}
+
+
+}
 void printdirs(t_file *buf, char *flags, int *size)
 {
 	char *time;
@@ -88,7 +118,11 @@ void printdirs(t_file *buf, char *flags, int *size)
 	if (ft_strchr(flags, 'l'))
 		printlong(buf, flags, size, time);	
 	ft_strdel(&time);
-	ft_putendl(buf->name);
+	if (ft_strchr(flags, 'G'))
+		color_out(buf->mode);
+	ft_putstr(buf->name);
+	ft_putendl(f_clear);
+
 }
 
 /* Вычисление суммы блоков в зависимости от флагов */

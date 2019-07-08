@@ -53,7 +53,7 @@ int read_folders(char **path, char *flags)
 	while((rd->entry = readdir(rd->fld)) != NULL)
 	{
 		buf = ft_strjoin(*path,rd->entry->d_name);
-		lstat(buf, &(rd->buf));
+		stat(buf, &(rd->buf));
 		ft_strdel(&buf);
 		get_dirs(&folds, rd, *path, flags);
 		get_params(&params, rd);
