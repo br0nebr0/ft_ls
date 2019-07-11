@@ -70,6 +70,7 @@ void output(t_imp **params, char *flags, int sum)
 	int		*size;
 
 	lst = *params;
+	size = NULL;
 	if (find(flags, "longOks"))
 	{
 	size = get_sizes(lst, flags);
@@ -86,5 +87,6 @@ void output(t_imp **params, char *flags, int sum)
 		out(&lst, flags, size);
 		ft_impdel(&lst, del_pars);
 	}
-	ft_memdel((void **) &size);
+	if (size)
+		free(size);
 }

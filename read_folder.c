@@ -44,22 +44,27 @@ int read_folders(char **path, char *flags)
 	folds = NULL;
 	params = NULL;
 	rd = (t_ls *) malloc(sizeof(t_ls));
-	if(!(rd->fld = opendir(*path)))
+	if((rd->fld = opendir(*path)))
 	{
-		free (rd);
-	 	return (-1);
+		*path = changepath(*path);
+		while((rd->entry = readdir(rd->fld)) != NULL)
+		{
+			buf = ft_strjoin(*path,rd->entry->d_name);
+			stat(buf, &(rd->stat));
+			ft_strdel(&buf);
+			get_dirs(&folds, rd, *path, flags); //for -R
+			get_params(&params, rd);
+			sum = calcblock(sum, flags, rd->entry->d_name, rd->stat.st_blocks);
+		}
+		closedir(rd->fld);
 	}
-	*path = changepath(*path);
-	while((rd->entry = readdir(rd->fld)) != NULL)
+	else
 	{
-		buf = ft_strjoin(*path,rd->entry->d_name);
-		stat(buf, &(rd->buf));
-		ft_strdel(&buf);
-		get_dirs(&folds, rd, *path, flags);
+		stat(*path, &(rd->stat));
+		rd->path = ft_strdup(ft_strrchr(*path, '/') ? ft_strrchr(*path,'/')+1 : *path);
+		sum = calcblock(sum, flags, rd->path, rd->stat.st_blocks);
 		get_params(&params, rd);
-		sum = calcblock(sum, flags, rd->entry->d_name, rd->buf.st_blocks);
 	}
-	closedir(rd->fld);
 	free (rd);
 	output(&params, flags, sum);
 	folds = (!ft_strchr(flags, 'f')) ? ft_impsort(folds, ft_impsz(folds), s_nm): folds;

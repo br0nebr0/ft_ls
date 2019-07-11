@@ -32,7 +32,8 @@ typedef struct s_ls
 {
 	DIR				*fld;
 	struct dirent	*entry;
-	struct stat		buf;
+	struct stat		stat;
+	char			*path;
 } 				t_ls;
 
 typedef struct s_path

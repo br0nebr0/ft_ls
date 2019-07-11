@@ -10,11 +10,7 @@ void get_error(t_imp **lst, char **str, int code)
 		ft_strdel(&(*str));
 		ft_putstr("\x1b[31m\x1b[47m");
 		ft_putstr("ERROR!!!");
-		ft_putstr("\x1b[0m");
-		ft_putendl("");
-		ft_putendl("ERROR!!!");
-		ft_putendl("ERROR!!!");
-		ft_putendl("ERROR!!!");
+		ft_putendl("\x1b[0m");
 		exit (0);
 	}
 }

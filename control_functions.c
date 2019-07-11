@@ -27,16 +27,19 @@ void *set_params(void *rd)
 
 	buf = (t_ls *) rd;
 	content = malloc(sizeof(t_file));
-	content->mode = get_mode(buf->buf);
-	content->lnk = buf->buf.st_nlink;
-	content->usr = buf->buf.st_uid;
-	content->grp = buf->buf.st_gid;
-	content->la = buf->buf.st_atim;
-	content->lm = buf->buf.st_mtim;
-	content->ls = buf->buf.st_ctim;
-	content->size = buf->buf.st_size;
-	content->blk = buf->buf.st_blocks;
-	content->name = ft_strdup(buf->entry->d_name);
+	content->mode = get_mode(buf->stat);
+	content->lnk = buf->stat.st_nlink;
+	content->usr = buf->stat.st_uid;
+	content->grp = buf->stat.st_gid;
+	content->la = buf->stat.st_atim;
+	content->lm = buf->stat.st_mtim;
+	content->ls = buf->stat.st_ctim;
+	content->size = buf->stat.st_size;
+	content->blk = buf->stat.st_blocks;
+	if (buf->entry)
+		content->name = ft_strdup(buf->entry->d_name);
+	else
+		content->name = ft_strdup(buf->path);
 	return ((void *)content);
 }
 /* функция для удаления данных из списка*/

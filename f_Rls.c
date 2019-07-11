@@ -19,7 +19,7 @@ void get_dirs(t_imp **folds, t_ls *rd, char *path, char *flags)
 
 	if (ft_strchr(flags, 'R'))
 	{
-		if (S_ISDIR(rd->buf.st_mode) && (ft_strequ(rd->entry->d_name, ".") == 0 &&
+		if (S_ISDIR(rd->stat.st_mode) && (ft_strequ(rd->entry->d_name, ".") == 0 &&
 		(ft_strequ(rd->entry->d_name, "..") == 0)))
 		{
 			str = ft_strjoin(path, rd->entry->d_name);
