@@ -47,6 +47,7 @@ int read_folders(char **path, char *flags)
 	if((rd->fld = opendir(*path)))
 	{
 		*path = changepath(*path);
+		rd->path = NULL;
 		while((rd->entry = readdir(rd->fld)) != NULL)
 		{
 			buf = ft_strjoin(*path,rd->entry->d_name);
@@ -60,11 +61,13 @@ int read_folders(char **path, char *flags)
 	}
 	else
 	{
+		rd->entry = NULL;
 		stat(*path, &(rd->stat));
 		rd->path = ft_strdup(ft_strrchr(*path, '/') ? ft_strrchr(*path,'/')+1 : *path);
 		sum = calcblock(sum, flags, rd->path, rd->stat.st_blocks);
 		get_params(&params, rd);
 	}
+	free(rd->path);
 	free (rd);
 	output(&params, flags, sum);
 	folds = (!ft_strchr(flags, 'f')) ? ft_impsort(folds, ft_impsz(folds), s_nm): folds;

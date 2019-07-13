@@ -28,9 +28,11 @@ char *get_mode(struct stat file)
 	mode[1] = (file.st_mode & S_IRUSR) ? 'r' : '-';
 	mode[2] = (file.st_mode & S_IWUSR) ? 'w' : '-';
 	mode[3] = (file.st_mode & S_IXUSR) ? 'x' : '-';
+	mode[3] = (file.st_mode & S_ISUID) ? 's' : mode[3];
 	mode[4] = (file.st_mode & S_IRGRP) ? 'r' : '-';
 	mode[5] = (file.st_mode & S_IWGRP) ? 'w' : '-';
 	mode[6] = (file.st_mode & S_IXGRP) ? 'x' : '-';
+	mode[6] = (file.st_mode & S_ISGID) ? 's' : mode[6];
 	mode[7] = (file.st_mode & S_IROTH) ? 'r' : '-';
 	mode[8] = (file.st_mode & S_IWOTH) ? 'w' : '-';
 	mode[9] = (file.st_mode & S_IXOTH) ? 'x' : '-';
@@ -106,11 +108,11 @@ void color_out(char *mode)
 			ft_putstr(f_pipe);
 		if(mode[0] == 'l')
 			ft_putstr(f_slink);
-		if(ft_strchr(mode, 'x'))
+		if(ft_strchr(mode, 'x') || ft_strchr(mode, 's'))
 		{
-			if (mode[6] == 'x')
+			if (mode[3] == 's')
 				ft_putstr(f_exuid);			
-			else if (mode[3] == 'x')
+			else if (mode[6] == 's')
 				ft_putstr(f_exgid);
 			else
 				ft_putstr(f_exec);

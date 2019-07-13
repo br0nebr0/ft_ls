@@ -57,17 +57,17 @@ typedef struct s_file
 }				t_file;
 
 /*COLORS*/
-#define f_dir "\x1b[34m" //
-#define f_slink "\x1b[35m" //
-#define f_sock "\x1b[32m" //
-#define f_pipe "\x1b[33m" //
-#define f_exec "\x1b[31m" 
-#define f_blsp "\x1b[33m\x1b[46m" //
-#define f_chsp "\x1b[33m\x1b[43m" //
-#define f_exuid "\x1b[30m\x1b[41m" 
-#define f_exgid "\x1b[30m\x1b[46m" 
-#define f_wrst "\x1b[30m\x1b[42m" //
-#define f_wrnst "\x1b[30m\x1b[43m" //
+#define f_dir "\x1b[0m\x1b[34m" //
+#define f_slink "\x1b[0m\x1b[35m" //
+#define f_sock "\x1b[0m\x1b[32m" //
+#define f_pipe "\x1b[0m\x1b[33m" //
+#define f_exec "\x1b[0m\x1b[31m" 
+#define f_blsp "\x1b[0m\x1b[34m\x1b[46m" //
+#define f_chsp "\x1b[0m\x1b[34m\x1b[43m" //
+#define f_exuid "\x1b[0m\x1b[30m\x1b[41m" 
+#define f_exgid "\x1b[0m\x1b[30m\x1b[46m" 
+#define f_wrst "\x1b[0m\x1b[30m\x1b[42m" //
+#define f_wrnst "\x1b[0m\x1b[30m\x1b[43m" //
 #define f_clear "\x1b[0m"
 
 /*List control functions*/
