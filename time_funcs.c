@@ -15,30 +15,25 @@ void cut_time(char *tm, int mode)
 char *get_time(t_file *buf, char *flags)
 {
 	char *tm;
+	struct timespec now;
 
 	if (ft_strchr(flags, 'c'))
+		now = buf->ls;
+	else if (ft_strchr(flags, 'w'))
+		now = buf->la;
+	else
+		now = buf->lm;
+	if (ft_strchr(flags, 'T'))
 	{
-		tm = ft_strdup(ctime(&(buf->ls.tv_sec)) + 4);
-		if (time(NULL) - buf->ls.tv_sec > 31556926)
-			cut_time(tm, 2);
-		else
-			cut_time(tm, 1);
+		tm = ft_strdup(ctime(&(now.tv_sec)));
+		tm[ft_strlen(tm) - 1] = 0;
 		return (tm);
 	}
-	if (ft_strchr(flags, 'w'))
-	{
-		tm = ft_strdup(ctime(&(buf->la.tv_sec)) + 4);
-		if (time(NULL) - buf->la.tv_sec > 31556926)
-			cut_time(tm, 2);
-		else
-			cut_time(tm, 1);
-		return (tm);
-		
-	}
-	tm = ft_strdup(ctime(&(buf->lm.tv_sec)) + 4);
-	if (time(NULL) - buf->lm.tv_sec > 31556926)
-			cut_time(tm, 2);
-		else
-			cut_time(tm, 1);
-		return (tm);
+	tm = ft_strdup(ctime(&(now.tv_sec)) + 4);
+	if (time(NULL) - now.tv_sec > 31556926)
+		cut_time(tm, 2);
+	else
+		cut_time(tm, 1);
+	return (tm);
+
 }

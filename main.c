@@ -34,7 +34,7 @@ int	main(int gc, char **gv)
 	char *buf;
 	
 	path = NULL;
-	flags = ft_strnew(37);
+	flags = ft_strnew(24);
 	if((test = get_args(gc, gv, &path, &flags)) < 0)
 		get_error(&path, &flags, test);
 	path = (!ft_strchr(flags, 'f')) ? ft_impsort(path, ft_impsz(path), s_pt): path;

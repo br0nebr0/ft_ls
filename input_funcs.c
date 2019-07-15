@@ -9,7 +9,7 @@ int ft_addline(char **buf, char *arg)
 	j = 0;
 	while (j < i)
 	{
-		if (!ft_strchr("@1AaBbCcdFfGgHhikLlmnOoPpqRrSsTtuvWwx", arg[j]))
+		if (!ft_strchr("@1AacdFfGgklnopRrSsTtUuw", arg[j]))
 		{
 			ft_strdel(&(*buf));
 			return (0);
