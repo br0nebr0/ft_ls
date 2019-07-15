@@ -59,7 +59,9 @@ void out(t_imp **params, char *flags, int *size)
 		{
 			if (ft_strchr(flags, 'A') && (!ft_strequ(buf->name, "..") && !ft_strequ(buf->name, ".")))
 			printdirs(buf, flags, size);
-			else if ((buf->name)[0]!= '.')
+			else if ((buf->name)[0] == '.' && ft_strchr(flags, 'd'))
+				printdirs(buf, flags, size);
+			else if ((buf->name)[0] == '.')
 				printdirs(buf, flags, size);
 		}
 }

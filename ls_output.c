@@ -39,6 +39,21 @@ char *get_mode(struct stat file)
 	return (mode);
 }
 
+void symbols(char *mode)
+{
+	if (mode[0] == 'd')
+		ft_putchar('/');
+	else if (mode[0] == 'l')
+		ft_putchar('@');
+	else if (mode[0] == 's')
+		ft_putchar('=');
+	else if (mode[0] == 'p')
+		ft_putchar('|');
+	else if (ft_strchr(mode, 'x'))
+		ft_putchar('*');
+
+}
+
 void printgroups(t_file *buf, char *flags, int *size)
 {
 	char *bff;
@@ -119,6 +134,7 @@ void color_out(char *mode)
 		}
 	}
 }
+
 void printdirs(t_file *buf, char *flags, int *size)
 {
 	char *time;
@@ -130,6 +146,10 @@ void printdirs(t_file *buf, char *flags, int *size)
 	if (ft_strchr(flags, 'G'))
 		color_out(buf->mode);
 	ft_putstr(buf->name);
+	if(ft_strchr(flags, 'p') && buf->mode[0] == 'd')
+		ft_putchar('/');
+	if(ft_strchr(flags, 'F'))
+		symbols(buf->mode);
 	ft_putendl(f_clear);
 
 }
@@ -137,10 +157,10 @@ void printdirs(t_file *buf, char *flags, int *size)
 /* Вычисление суммы блоков в зависимости от флагов */
 int calcblock(int sum, char *flags, char *name, int size)
 {
-	if (!ft_strchr(flags, 'a') && ft_strequ(name, ".."))
+	if ((!ft_strchr(flags, 'a') && ft_strequ(name, "..")))
 		sum -= size;
 	else if ((!ft_strchr(flags, 'A') && !ft_strchr(flags, 'a'))
-	&& name[0] == '.')
+	&& name[0] == '.' && !ft_strchr(flags, 'd'))
 			sum -= size;
 		sum += size;
 	return (sum);

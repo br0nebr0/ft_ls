@@ -44,7 +44,16 @@ int read_folders(char **path, char *flags)
 	folds = NULL;
 	params = NULL;
 	rd = (t_ls *) malloc(sizeof(t_ls));
-	if((rd->fld = opendir(*path)))
+	if (ft_strchr(flags, 'd'))
+	{
+		rd->entry = NULL;
+		rd->path = ft_strdup(*path);
+		stat(*path, &(rd->stat));
+		sum = calcblock(sum, flags, rd->path, rd->stat.st_blocks);
+		get_params(&params, rd);
+
+	}
+	else if((rd->fld = opendir(*path)))
 	{
 		*path = changepath(*path);
 		rd->path = NULL;
