@@ -31,56 +31,74 @@ char *changepath(char *path)
 	return (path);
 }
 
-/*HARD FUNC TO SPLIT*/
+int read_d(t_ls **rd, char *path, t_imp **files, char *flags)
+{
+	int sum;
+
+	sum = 0;
+	(*rd)->entry = NULL;
+	(*rd)->path = ft_strdup(path);
+	stat(path, &((*rd)->stat));
+	sum = calcblock(sum, flags, (*rd)->path, (*rd)->stat.st_blocks);
+	get_params(&(*files), *rd);
+	return (sum);
+}
+
+int read_f(t_ls **rd, char *path, t_imp **files, char *flags)
+{
+	int sum;
+
+	sum = 0;
+	(*rd)->entry = NULL;
+	stat(path, &((*rd)->stat));
+	(*rd)->path = ft_strdup(ft_strrchr(path, '/') ? ft_strrchr(path,'/')+1 : path);
+	sum = calcblock(sum, flags, (*rd)->path, (*rd)->stat.st_blocks);
+	get_params(&(*files), *rd);
+	return (sum);
+}
+
+int read_dir(t_ls **rd, char **path, t_imp **files, char *flags, t_imp **folds)
+{
+	int sum;
+	char *buf;
+
+	sum = 0;
+	*path = changepath(*path);
+		(*rd)->path = NULL;
+		while(((*rd)->entry = readdir((*rd)->fld)) != NULL)
+		{
+			buf = ft_strjoin(*path, (*rd)->entry->d_name);
+			stat(buf, &((*rd)->stat));
+			ft_strdel(&buf);
+			get_dirs(&(*folds), *rd, *path, flags); //for -R
+			get_params(&(*files), *rd);
+			sum = calcblock(sum, flags, (*rd)->entry->d_name, (*rd)->stat.st_blocks);
+		}
+		closedir((*rd)->fld);
+	return (sum);
+}
+
 int read_folders(char **path, char *flags)
 {
 	t_ls *rd;
 	int sum;
 	t_imp *folds;
-	t_imp *params;
-	char	*buf;
+	t_imp *files;
 
 	sum = 0;
 	folds = NULL;
-	params = NULL;
+	files = NULL;
 	rd = (t_ls *) malloc(sizeof(t_ls));
 	if (ft_strchr(flags, 'd'))
-	{
-		rd->entry = NULL;
-		rd->path = ft_strdup(*path);
-		stat(*path, &(rd->stat));
-		sum = calcblock(sum, flags, rd->path, rd->stat.st_blocks);
-		get_params(&params, rd);
-
-	}
+		sum = read_d(&rd, *path, &files, flags);
 	else if((rd->fld = opendir(*path)))
-	{
-		*path = changepath(*path);
-		rd->path = NULL;
-		while((rd->entry = readdir(rd->fld)) != NULL)
-		{
-			buf = ft_strjoin(*path,rd->entry->d_name);
-			stat(buf, &(rd->stat));
-			ft_strdel(&buf);
-			get_dirs(&folds, rd, *path, flags); //for -R
-			get_params(&params, rd);
-			sum = calcblock(sum, flags, rd->entry->d_name, rd->stat.st_blocks);
-		}
-		closedir(rd->fld);
-	}
+		sum = read_dir(&rd, &(*path), &files, flags, &folds);
 	else
-	{
-		rd->entry = NULL;
-		stat(*path, &(rd->stat));
-		rd->path = ft_strdup(ft_strrchr(*path, '/') ? ft_strrchr(*path,'/')+1 : *path);
-		sum = calcblock(sum, flags, rd->path, rd->stat.st_blocks);
-		get_params(&params, rd);
-	}
+		sum = read_f(&rd, *path, &files, flags);
 	free(rd->path);
 	free (rd);
-	output(&params, flags, sum);
 	folds = (!ft_strchr(flags, 'f')) ? ft_impsort(folds, ft_impsz(folds), s_nm): folds;
+	output(&files, flags, sum);
 	recursion(&folds, flags);
-	ft_strdel(&(*path));
 	return (0);
 }

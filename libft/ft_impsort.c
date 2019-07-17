@@ -1,14 +1,12 @@
 #include "libft.h"
 
-static void splitlist(t_imp *source, t_imp **lst1, t_imp **lst2)
+static void splitlist(t_imp *source, t_imp **lst1, t_imp **lst2, int size)
 {
 	int i;
-	int j;
 
 	i = 0;
-	j = ft_impsz(source);
 	*lst2 = source;
-	while (i < j / 2)
+	while (i < size / 2)
 	{
 		*lst1 = *lst2;
 		*lst2 = (*lst2)->next;
@@ -75,7 +73,7 @@ static t_imp *mergelist(t_imp *lst1, t_imp *lst2, int (*compr)(void *, void *))
 	return (lst);
 }
 
-t_imp *ft_impsort(t_imp *lst, int cnt,int (*compr)(void *, void *))
+t_imp *ft_impsort(t_imp *lst, int cnt, int (*compr)(void *, void *))
 {
 	t_imp	*l_lst;
 	t_imp	*r_lst;
@@ -86,9 +84,9 @@ t_imp *ft_impsort(t_imp *lst, int cnt,int (*compr)(void *, void *))
 		n_lst = lst;
 		return(n_lst);
 	}
-	splitlist(lst, &l_lst, &r_lst);
-	l_lst = ft_impsort(l_lst, ft_impsz(l_lst), compr);
-	r_lst = ft_impsort(r_lst, ft_impsz(r_lst), compr);
+	splitlist(lst, &l_lst, &r_lst, cnt);
+	l_lst = ft_impsort(l_lst, cnt / 2, compr);
+	r_lst = ft_impsort(r_lst, cnt - cnt / 2, compr);
 	n_lst = mergelist(l_lst, r_lst, compr);
 	return (n_lst);
 }
