@@ -135,23 +135,32 @@ void color_out(char *mode)
 	}
 }
 
-void printdirs(t_file *buf, char *flags, int *size)
+void printdirs(t_file *file, char *flags, int *size, char *path)
 {
 	char *time;
+	char *buf;
+	char *fp;
 
-	time = get_time(buf, flags);
+	time = get_time(file, flags);
 	if (ft_strchr(flags, 'l'))
-		printlong(buf, flags, size, time);	
+		printlong(file, flags, size, time);	
 	ft_strdel(&time);
 	if (ft_strchr(flags, 'G'))
-		color_out(buf->mode);
-	ft_putstr(buf->name);
-	if(ft_strchr(flags, 'p') && buf->mode[0] == 'd')
+		color_out(file->mode);
+	ft_putstr(file->name);
+		buf = ft_strnew(255);
+		fp = ft_strjoin(path, file->name);
+		readlink(fp, buf, 255);
+		ft_putstr(f_clear);
+		ft_putstr((ft_strlen(buf) > 0) ? " -> " : "");
+		ft_putstr(buf);
+		ft_strdel(&buf);
+		ft_strdel(&fp);
+	if(ft_strchr(flags, 'p') && file->mode[0] == 'd')
 		ft_putchar('/');
 	if(ft_strchr(flags, 'F'))
-		symbols(buf->mode);
+		symbols(file->mode);
 	ft_putendl(f_clear);
-
 }
 
 /* Вычисление суммы блоков в зависимости от флагов */

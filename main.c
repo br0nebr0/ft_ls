@@ -29,24 +29,24 @@ char *get_path(void *lst)
 int	main(int gc, char **gv) 
 {
 	t_imp	*path;
-	int		test;
+	int		err;
 	char	*flags;
 	char *buf;
 	
 	path = NULL;
 	flags = ft_strnew(24);
-	if((test = get_args(gc, gv, &path, &flags)) < 0)
-		get_error(&path, &flags, test);
+	if((err = get_args(gc, gv, &path, &flags)) < 0)
+		get_error(&path, &flags, err);
 	path = (!ft_strchr(flags, 'f')) ? ft_impsort(path, ft_impsz(path), s_pt): path;
-	while(path && test >= 0)
+	while(path && err >= 0)
 	{
 		buf = get_path(path->content);
-		test = read_folders(&buf, flags);
+		err = read_folders(&buf, flags);
 		ft_impdel(&path, deldir);
 		ft_strdel(&buf);		
 	}
-	if (test < 0)
-		get_error(&path, &flags, test);
+	if (err < 0)
+		get_error(&path, &flags, err);
 	ft_strdel(&flags);
 	exit(1);
 }

@@ -85,7 +85,7 @@ int s_lm(void *lst1, void *lst2);
 int s_nm(void *str1, void *str2);
 /*input funcs*/
 int get_args(int gc, char **gv, t_imp **path, char **flags);
-void output(t_imp **params, char *flags, int sum);
+void output(t_imp **params, char *flags, int sum, char *path);
 /*sub funcs*/
 int find(char *str1, char *str2);
 void sort_by_flags(t_imp **list, char *flags);
@@ -101,5 +101,5 @@ char *changepath(char *path);
 void printbuf(char *buffer, int sum, char *flags);
 void get_dirs(t_imp **folds, t_ls *rd, char *path, char *flags);
 int calcblock(int sum, char *flags, char *name, int size);
-void printdirs(t_file *buf, char *flags, int *size);
+void printdirs(t_file *buf, char *flags, int *size, char *path);
 #endif

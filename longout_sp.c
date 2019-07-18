@@ -46,7 +46,7 @@ int *get_sizes(t_imp *list, char *flags)
 	return (size);
 }
 
-void out(t_imp **params, char *flags, int *size)
+void out(t_imp **params, char *flags, int *size, char *path)
 {
 	t_imp *lst;
 	t_file *buf;
@@ -54,19 +54,19 @@ void out(t_imp **params, char *flags, int *size)
 	lst = *params;
 	buf = (t_file *) (lst->content);
 		if(ft_strchr(flags, 'a'))
-			printdirs(buf, flags, size);
+			printdirs(buf, flags, size, path);
 		else 
 		{
 			if (ft_strchr(flags, 'A') && (!ft_strequ(buf->name, "..") && !ft_strequ(buf->name, ".")))
-			printdirs(buf, flags, size);
+			printdirs(buf, flags, size, path);
 			else if (((buf->name)[0] == '.' || (buf->name)[0] != '~') && ft_strchr(flags, 'd'))
-				printdirs(buf, flags, size);
+				printdirs(buf, flags, size, path);
 			else if ((buf->name)[0] != '.' && (buf->name)[0] != '~')
-				printdirs(buf, flags, size);
+				printdirs(buf, flags, size, path);
 		}
 }
 
-void output(t_imp **params, char *flags, int sum)
+void output(t_imp **params, char *flags, int sum, char *path)
 {
 	t_imp *lst;
 	int		*size;
@@ -86,7 +86,7 @@ void output(t_imp **params, char *flags, int sum)
 	sort_by_flags(&lst, flags);
 	while (lst)
 	{
-		out(&lst, flags, size);
+		out(&lst, flags, size, path);
 		ft_impdel(&lst, del_pars);
 	}
 	if (size)
