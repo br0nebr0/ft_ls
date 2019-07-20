@@ -115,15 +115,15 @@ void color_out(char *mode)
 	{
 		if(mode[0] == 'b')
 			ft_putstr(f_blsp);
-		if(mode[0] == 'c')
+		else if(mode[0] == 'c')
 			ft_putstr(f_chsp);
-		if(mode[0] == 's')
+		else if(mode[0] == 's')
 			ft_putstr(f_sock);
-		if(mode[0] == 'p')
+		else if(mode[0] == 'p')
 			ft_putstr(f_pipe);
-		if(mode[0] == 'l')
+		else if(mode[0] == 'l')
 			ft_putstr(f_slink);
-		if(ft_strchr(mode, 'x') || ft_strchr(mode, 's'))
+		else if(ft_strchr(mode, 'x') || ft_strchr(mode, 's'))
 		{
 			if (mode[3] == 's')
 				ft_putstr(f_exuid);			
@@ -135,12 +135,39 @@ void color_out(char *mode)
 	}
 }
 
+void printlink(char *flags, char *path, char *file, struct stat st)
+{
+	char *buf;
+	char *fp;
+	struct stat	rd;
+	char *mode;
+
+	buf = ft_strnew(255);
+	fp = ft_strjoin(path, file);
+	stat(fp, &(rd));
+	if (S_ISLNK(st.st_mode) && ft_strchr(flags, 'l'))
+	{
+		readlink(fp, buf, 255);
+		ft_putstr(f_clear);
+		ft_putstr((buf[0] > 0) ? " -> " : "");
+		if (ft_strchr(flags, 'G'))
+		{
+			mode = get_mode(rd);
+			color_out(mode);		
+		}
+		ft_putstr(buf);
+	}
+	ft_strdel(&buf);
+	ft_strdel(&fp);
+}
+
 void printdirs(t_file *file, char *flags, int *size, char *path)
 {
 	char *time;
 	char *buf;
-	char *fp;
+	struct stat st;
 
+	buf = ft_strjoin(path, file->name);
 	time = get_time(file, flags);
 	if (ft_strchr(flags, 'l'))
 		printlong(file, flags, size, time);	
@@ -148,19 +175,14 @@ void printdirs(t_file *file, char *flags, int *size, char *path)
 	if (ft_strchr(flags, 'G'))
 		color_out(file->mode);
 	ft_putstr(file->name);
-		buf = ft_strnew(255);
-		fp = ft_strjoin(path, file->name);
-		readlink(fp, buf, 255);
-		ft_putstr(f_clear);
-		ft_putstr((ft_strlen(buf) > 0) ? " -> " : "");
-		ft_putstr(buf);
-		ft_strdel(&buf);
-		ft_strdel(&fp);
+	lstat(buf, &(st));
+	printlink(flags, path, file->name, st);
 	if(ft_strchr(flags, 'p') && file->mode[0] == 'd')
 		ft_putchar('/');
 	if(ft_strchr(flags, 'F'))
 		symbols(file->mode);
 	ft_putendl(f_clear);
+	ft_strdel(&buf);
 }
 
 /* Вычисление суммы блоков в зависимости от флагов */

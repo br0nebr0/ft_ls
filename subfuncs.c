@@ -48,8 +48,9 @@ void printword(char *str)
 	ft_putchar(' ');
 }
 
-void printnum(int nbr)
+void printnum(long long int nbr)
 {
+
 	ft_putnbr(nbr);
 	ft_putchar(' ');
 }

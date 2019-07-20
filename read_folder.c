@@ -86,19 +86,26 @@ int read_f(char *path, t_imp **files, char *flags)
 
 	sum = 0;
 	buf = ft_strnew(255);
-	if(readlink(path, buf, 255))
+	if(readlink(path, buf, 255) && buf[0] > 0)
 		read_folders(&buf, flags);
 	else
 	{
 		rd = (t_ls *) malloc(sizeof(t_ls));
 		rd->entry = NULL;
-		lstat(path, &(rd->stat));
-		rd->path = ft_strdup(ft_strrchr(path, '/') ? ft_strrchr(path,'/')+1 : path);
-		sum = calcblock(sum, flags, rd->path, rd->stat.st_blocks);
-		get_params(&(*files), rd);
-		ft_strdel(&buf);
+		if(lstat(path, &(rd->stat)) > 0)
+		{
+			rd->path = ft_strdup(ft_strrchr(path, '/') ? ft_strrchr(path,'/')+1 : path);
+			sum = calcblock(sum, flags, rd->path, rd->stat.st_blocks);
+			get_params(&(*files), rd);
+			ft_strdel(&buf);
+			output(&(*files), flags, sum, path);
+		}
+		else 
+		{
+			get_error(path);
+		}
 		free (rd);
-		output(&(*files), flags, sum, path);
+		
 	}
 	return (sum);
 }
@@ -113,12 +120,15 @@ int read_folders(char **path, char *flags)
 	sum = 0;
 	folds = NULL;
 	files = NULL;
+	fld = NULL;
 	if (ft_strchr(flags, 'd'))
 		sum = read_d(*path, &files, flags);
 	else if((fld = (opendir(*path))))
+	{
 		sum = read_dir(&(*path), &files, flags, &folds);
+		closedir(fld);
+	}
 	else
 		sum = read_f(*path, &files, flags);
-	closedir(fld);
 	return (sum);
 }

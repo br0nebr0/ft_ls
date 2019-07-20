@@ -91,9 +91,10 @@ int find(char *str1, char *str2);
 void sort_by_flags(t_imp **list, char *flags);
 void printwspaces(int sz);
 void printword(char *str);
-void printnum(int nbr);
+void printnum(long long int nbr);
 char *get_time(t_file *buf, char *flags);
 /*other funcs*/
+void get_error(char *str);
 int read_folders(char **path, char *flags);
 char *get_mode(struct stat file);
 void recursion(t_imp **folds, char *flags);
