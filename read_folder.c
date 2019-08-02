@@ -83,7 +83,7 @@ int linkaccess(char *path, char *flags)
 	char *buf;
 
 	buf = ft_strnew(0);
-	if (!readlink(path, buf, 0))
+	if (readlink(path, buf, 0) < 0)
 	{
 		ft_strdel(&buf);
 		return (1);
@@ -138,7 +138,7 @@ int read_folders(char **path, char *flags)
 	else if((fld = (opendir(*path))))
 	{
 		if(linkaccess(*path, flags) == 1)
-		read_dir(&(*path), &files, flags, &folds);
+			read_dir(&(*path), &files, flags, &folds);
 		else
 			read_d(*path, &files, flags);
 		closedir(fld);

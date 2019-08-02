@@ -23,10 +23,13 @@ void get_dirs(t_imp **folds, t_ls *rd, char *path, char *flags)
 		(ft_strequ(rd->entry->d_name, "..") == 0)))
 		{
 			str = ft_strjoin(path, rd->entry->d_name);
+			if (rd->entry->d_name[0] != '.' || find(flags,"Aa"))
+			{
 			 if (!*folds)
 				*folds = ft_impnew(str, addir);
 			 else
 				ft_impadd(&(*folds), ft_impnew(str, addir));
+			}
 			ft_strdel(&str);
 		}
 	}
