@@ -1,13 +1,17 @@
 #include "ft_ls.h"
 
-int ch_nbr_sz(int size, int nbr)
+int ch_nbr_sz(int size, long long int nbr)
 {
-	char *str;
+	int str;
 
-	str = ft_itoa(nbr);
-	if ((int) ft_strlen(str) > size)
-		size = ft_strlen(str);
-	ft_strdel(&str);
+	str = 0;
+	while (nbr > 0)
+	{
+		str++;
+		nbr /= 10;
+	}
+	if (str > size)
+		size = str;
 	return (size);
 }
 
