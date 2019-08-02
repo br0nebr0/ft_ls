@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME = ft_ls
-SRC = main.c read_folder.c f_Rls.c ls_output.c control_functions.c sort_functions.c time_sort.c input_funcs.c longout_sp.c subfuncs.c time_funcs.c
+SRC = main.c read_folder.c f_Rls.c ls_output.c control_functions.c sort_functions.c error.c time_sort.c input_funcs.c longout_sp.c subfuncs.c time_funcs.c
 OBJ = $(SRC:.c=.o)
 LIBFT = libft/libft.a
 HEADER = -c -I ft_ls.h

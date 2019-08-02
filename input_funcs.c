@@ -11,7 +11,7 @@ int ft_addline(char **buf, char *arg)
 	{
 		if (!ft_strchr("@1AacdFfGgklnopRrSsTtUuw", arg[j]))
 		{
-			ft_strdel(&(*buf));
+			*buf = ft_strncat(*buf, arg + j, 1);
 			return (0);
 		}
 		if (!ft_strchr(*buf, arg[j]))

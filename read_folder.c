@@ -75,7 +75,7 @@ int read_d(char *path, t_imp **files, char *flags)
 	free(rd->path);
 	free (rd);
 	output(&(*files), flags, sum, path);
-	return (sum);
+	return (0);
 }
 
 int read_f(char *path, t_imp **files, char *flags)
@@ -100,10 +100,6 @@ int read_f(char *path, t_imp **files, char *flags)
 			ft_strdel(&buf);
 			output(&(*files), flags, sum, path);
 		}
-		else 
-		{
-			get_error(path);
-		}
 		free (rd);
 		
 	}
@@ -112,23 +108,25 @@ int read_f(char *path, t_imp **files, char *flags)
 
 int read_folders(char **path, char *flags)
 {
-	int sum;
+	// int errno;
 	t_imp *folds;
 	t_imp *files;
 	DIR 	*fld;
 
-	sum = 0;
+	errno = 0;
 	folds = NULL;
 	files = NULL;
 	fld = NULL;
 	if (ft_strchr(flags, 'd'))
-		sum = read_d(*path, &files, flags);
+		read_d(*path, &files, flags);
 	else if((fld = (opendir(*path))))
 	{
-		sum = read_dir(&(*path), &files, flags, &folds);
+		read_dir(&(*path), &files, flags, &folds);
 		closedir(fld);
 	}
+	else if (errno == ENOTDIR)
+		read_f(*path, &files, flags);
 	else
-		sum = read_f(*path, &files, flags);
-	return (sum);
+		access_dir_error(*path);
+	return (0);
 }

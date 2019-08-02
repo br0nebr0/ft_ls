@@ -12,30 +12,47 @@
 
 #include "ft_ls.h"
 
+
+char get_file_type(struct stat file)
+{
+	if (S_ISDIR(file.st_mode))
+		return ('d');
+	if (S_ISREG(file.st_mode))
+		return ('-');
+	if (S_ISBLK(file.st_mode))
+		return ('b');
+	if (S_ISCHR(file.st_mode))
+		return ('c');
+	if (S_ISFIFO(file.st_mode))
+		return ('p');
+	if (S_ISLNK(file.st_mode))
+		return ('l');
+	if (S_ISSOCK(file.st_mode))
+		return ('s');
+	return ('?');
+}
 /* Читаем права файла */
 char *get_mode(struct stat file)
 {
 	char *mode;
 
 	mode = ft_strnew(10);
-	mode[0] = (S_ISDIR(file.st_mode)) ? 'd' : '-';
-	mode[0] = (S_ISREG(file.st_mode)) ? '-' : mode[0];
-	mode[0] = (S_ISBLK(file.st_mode)) ? 'b' : mode[0];
-	mode[0] = (S_ISCHR(file.st_mode)) ? 'c' : mode[0];
-	mode[0] = (S_ISFIFO(file.st_mode)) ? 'p' : mode[0];
-	mode[0] = (S_ISLNK(file.st_mode)) ? 'l' : mode[0];
-	mode[0] = (S_ISSOCK(file.st_mode)) ? 's' : mode[0];
+	mode[0] = get_file_type(file);
 	mode[1] = (file.st_mode & S_IRUSR) ? 'r' : '-';
 	mode[2] = (file.st_mode & S_IWUSR) ? 'w' : '-';
 	mode[3] = (file.st_mode & S_IXUSR) ? 'x' : '-';
-	mode[3] = (file.st_mode & S_ISUID) ? 's' : mode[3];
 	mode[4] = (file.st_mode & S_IRGRP) ? 'r' : '-';
 	mode[5] = (file.st_mode & S_IWGRP) ? 'w' : '-';
 	mode[6] = (file.st_mode & S_IXGRP) ? 'x' : '-';
-	mode[6] = (file.st_mode & S_ISGID) ? 's' : mode[6];
 	mode[7] = (file.st_mode & S_IROTH) ? 'r' : '-';
 	mode[8] = (file.st_mode & S_IWOTH) ? 'w' : '-';
 	mode[9] = (file.st_mode & S_IXOTH) ? 'x' : '-';
+	if (file.st_mode & S_ISUID)
+		mode[3] = (file.st_mode & S_IXUSR) ? 's' : 'S';
+	if (file.st_mode & S_ISGID)
+		mode[6] = (file.st_mode & S_IXGRP) ? 's' : 'S';
+	if (file.st_mode & S_ISVTX)
+		mode[9] = (file.st_mode & S_IXOTH) ? 't' : 'T';
 	return (mode);
 }
 
@@ -57,12 +74,20 @@ void symbols(char *mode)
 void printgroups(t_file *buf, char *flags, int *size)
 {
 	char *bff;
+	struct passwd *pass;
 
-	bff = (ft_strchr(flags, 'n')) ? ft_itoa(getpwuid(buf->usr)->pw_uid) :
-		ft_strdup(getpwuid(buf->usr)->pw_name);
-		printwspaces(size[2] - ft_strlen(bff));
-		printword(bff);
-		ft_strdel(&bff);
+	pass = getpwuid(buf->usr);
+	if (!(pass))
+	bff = (ft_strchr(flags, 'n')) ? ft_itoa(0) : ft_strdup("root");
+	else if (ft_strchr (flags, 'n'))
+		bff = ft_itoa(pass->pw_uid);
+	else
+	{
+		bff = ft_strdup(pass->pw_name);
+	}
+	printwspaces(size[2] - ft_strlen(bff));
+	printword(bff);
+	ft_strdel(&bff);
 	if(!ft_strchr(flags, 'o'))
 	{
 		bff = (ft_strchr(flags, 'n')) ? ft_itoa(getgrgid(buf->usr)->gr_gid) :
@@ -184,7 +209,6 @@ void printdirs(t_file *file, char *flags, int *size, char *path)
 	ft_putendl(f_clear);
 	ft_strdel(&buf);
 }
-
 /* Вычисление суммы блоков в зависимости от флагов */
 int calcblock(int sum, char *flags, char *name, int size)
 {

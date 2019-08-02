@@ -24,7 +24,7 @@
 # include <stdio.h>
 # include <string.h>
 # include <sys/ioctl.h>
-
+# include <errno.h>
 /* 
 	I forgot this struct, but it important
 */
@@ -45,6 +45,7 @@ typedef struct s_path
 typedef struct s_file
 {
 	char			*mode;
+	char			xattr;
 	int				lnk;
 	uid_t			usr;
 	gid_t			grp;
@@ -57,18 +58,19 @@ typedef struct s_file
 }				t_file;
 
 /*COLORS*/
-#define f_dir "\x1b[0m\x1b[34m" //
-#define f_slink "\x1b[0m\x1b[35m" //
-#define f_sock "\x1b[0m\x1b[32m" //
-#define f_pipe "\x1b[0m\x1b[33m" //
+#define f_dir "\x1b[0m\x1b[34m" 
+#define f_slink "\x1b[0m\x1b[35m" 
+#define f_sock "\x1b[0m\x1b[32m" 
+#define f_pipe "\x1b[0m\x1b[33m" 
 #define f_exec "\x1b[0m\x1b[31m" 
-#define f_blsp "\x1b[0m\x1b[34m\x1b[46m" //
-#define f_chsp "\x1b[0m\x1b[34m\x1b[43m" //
+#define f_blsp "\x1b[0m\x1b[34m\x1b[46m" 
+#define f_chsp "\x1b[0m\x1b[34m\x1b[43m" 
 #define f_exuid "\x1b[0m\x1b[30m\x1b[41m" 
 #define f_exgid "\x1b[0m\x1b[30m\x1b[46m" 
-#define f_wrst "\x1b[0m\x1b[30m\x1b[42m" //
-#define f_wrnst "\x1b[0m\x1b[30m\x1b[43m" //
+#define f_wrst "\x1b[0m\x1b[30m\x1b[42m" 
+#define f_wrnst "\x1b[0m\x1b[30m\x1b[43m" 
 #define f_clear "\x1b[0m"
+#define ERR_USAGE "usage: ft_ls [-@1AacdFfGgklnopRrSsTtUuw] [file ...]"
 
 /*List control functions*/
 void *addir(void *str);
@@ -93,6 +95,9 @@ void printwspaces(int sz);
 void printword(char *str);
 void printnum(long long int nbr);
 char *get_time(t_file *buf, char *flags);
+/*err funcs*/
+void usage_error(char **flags, t_imp **path);
+void access_dir_error (char *path);
 /*other funcs*/
 void get_error(char *str);
 int read_folders(char **path, char *flags);

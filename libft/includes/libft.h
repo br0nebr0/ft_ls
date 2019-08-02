@@ -99,4 +99,5 @@ size_t			ft_strlento(const char *str, const char c);
 int				ft_impsz(t_imp *lst);
 t_imp			*ft_impsort(t_imp *lst, int cnt, int (*compr)(void *, void *));
 t_imp			*ft_imprev(t_imp *list);
+void			ft_impdellist(t_imp **imp, void (*del)(void **));
 #endif
