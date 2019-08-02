@@ -24,16 +24,13 @@ void usage_error(char **flags, t_imp **path)
 
 void access_dir_error (char *path)
 {
-	if (errno == EACCES)
-	{
-		ft_putstr_fd("ft_ls: cannot open '", 2);
-		ft_putstr_fd (path, 2);
-		ft_putendl_fd ("': permission denied", 2);
-	}
-	if (errno == ENOENT)
-	{
-		ft_putstr_fd("ft_ls: cannot open '", 2);
-		ft_putstr_fd (path, 2);
-		ft_putendl_fd ("': no such file or catalog", 2);
-	}
+	char *buf;
+	char *b;
+
+
+		buf = ft_strjoin("ft_ls: cannot open '", path);
+		b = ft_strjoin(buf, "'");
+		ft_strdel(&buf);
+		perror(b);
+		ft_strdel(&b);
 }

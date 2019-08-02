@@ -78,6 +78,24 @@ int read_d(char *path, t_imp **files, char *flags)
 	return (0);
 }
 
+int linkaccess(char *path, char *flags)
+{
+	char *buf;
+
+	buf = ft_strnew(0);
+	if (!readlink(path, buf, 0))
+	{
+		ft_strdel(&buf);
+		return (1);
+	}
+	ft_strdel(&buf);
+	if (find (flags, "longOks") && path[ft_strlen(path) - 1] == '/')
+		return (1);
+	if (find (flags, "longOks"))
+		return (0);
+	return (1);
+}
+
 int read_f(char *path, t_imp **files, char *flags)
 {
 	int sum;
@@ -86,7 +104,7 @@ int read_f(char *path, t_imp **files, char *flags)
 
 	sum = 0;
 	buf = ft_strnew(255);
-	if(readlink(path, buf, 255) && buf[0] > 0)
+	if((readlink(path, buf, 255) && buf[0] > 0))
 		read_folders(&buf, flags);
 	else
 	{
@@ -101,14 +119,12 @@ int read_f(char *path, t_imp **files, char *flags)
 			output(&(*files), flags, sum, path);
 		}
 		free (rd);
-		
 	}
 	return (sum);
 }
 
 int read_folders(char **path, char *flags)
 {
-	// int errno;
 	t_imp *folds;
 	t_imp *files;
 	DIR 	*fld;
@@ -121,7 +137,10 @@ int read_folders(char **path, char *flags)
 		read_d(*path, &files, flags);
 	else if((fld = (opendir(*path))))
 	{
+		if(linkaccess(*path, flags) == 1)
 		read_dir(&(*path), &files, flags, &folds);
+		else
+			read_d(*path, &files, flags);
 		closedir(fld);
 	}
 	else if (errno == ENOTDIR)
