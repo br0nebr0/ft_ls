@@ -36,7 +36,6 @@ int get_args(int gc, char **gv, t_imp **path, char **flags)
 	if (gc == 1)
 	{
 		*path = ft_impnew(".", addir);
-		*flags = ft_strdup("");
 		return(0);
 	}
 	i = 1;

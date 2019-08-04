@@ -22,19 +22,21 @@ int	main(int gc, char **gv)
 	// ioctl( 0, TIOCSWINSZ, (char *) &size );
 	// printf( "Rows: %u\nCols: %u\n", size.ws_row, size.ws_col );
 	// exit (0);
+	errno = 0;
 	path = NULL;
 	flags = ft_strnew(24);
 	err = get_args(gc, gv, &path, &flags);
 	if (err < 0)
 		usage_error(&flags, &path);
 	path = (!ft_strchr(flags, 'f')) ? ft_impsort(path, ft_impsz(path), s_pt): path;
+	err = 0;
 	while(path && err >= 0)
 	{
 		buf = get_path(path->content);
-		err = read_folders(&buf, flags);
+		err = read_folders(buf, flags);
 		ft_impdel(&path, deldir);
 		ft_strdel(&buf);		
 	}
 	ft_strdel(&flags);
-	exit(1);
+	exit (err);
 }

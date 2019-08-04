@@ -34,6 +34,7 @@ void get_dirs(t_imp **folds, t_ls *rd, char *path, char *flags)
 		}
 	}
 }
+
 void recursion(t_imp **folds, char *flags)
 {
 	if (ft_strchr(flags, 'R'))
@@ -41,7 +42,7 @@ void recursion(t_imp **folds, char *flags)
 		{
 			ft_putendl("");
 			if(((t_path *)(*folds)->content)->path)
-				read_folders(&((t_path *)(*folds)->content)->path, flags);
+				read_folders(((t_path *)(*folds)->content)->path, flags);
 			ft_impdel(&(*folds), deldir);
 		}
 }

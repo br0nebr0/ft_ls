@@ -12,7 +12,6 @@
 
 #include "ft_ls.h"
 
-/*добавляем слэши в случае их отсутствия*/
 char *changepath(char *path)
 {
 	char *str;
@@ -25,127 +24,141 @@ char *changepath(char *path)
 	if ((path[ft_strlen(path)-1]) != '/')
 	{
 		str = ft_strjoin(path, "/");
-		ft_strdel(&path);
 		return(str);
 	}
-	return (path);
+	str = ft_strdup(path);
+	return (str);
 }
 
-int read_dir(char **path, t_imp **files, char *flags, t_imp **folds)
+int do_read_loop(t_imp **folds, t_imp **files, t_ls **rd, char *flags)
 {
 	int sum;
 	char *buf;
-	t_ls *rd;
 
 	sum = 0;
-	rd = (t_ls *) malloc(sizeof(t_ls));
-	*path = changepath(*path);
-	rd->path = NULL;
-	rd->fld = opendir(*path);
-	while((rd->entry = readdir(rd->fld)) != NULL)
+	while(((*rd)->entry = readdir((*rd)->fld)) != NULL)
 	{
-		buf = ft_strjoin(*path, rd->entry->d_name);
-		lstat(buf, &(rd->stat));
+		buf = ft_strjoin((*rd)->path, (*rd)->entry->d_name);
+		lstat(buf, &((*rd)->stat));
 		ft_strdel(&buf);
-		get_dirs(&(*folds), rd, *path, flags); //for -R
-		get_params(&(*files), rd);
-		sum = calcblock(sum, flags, rd->entry->d_name, rd->stat.st_blocks);
+		get_dirs(&(*folds), *rd, (*rd)->path, flags);
+		get_params(&(*files), *rd);
+		sum = calcblock(sum, flags, (*rd)->entry->d_name, (*rd)->stat.st_blocks);
 	}
-	closedir(rd->fld);
-	free(rd->path);
-	free (rd);
-	*folds = (!ft_strchr(flags, 'f')) ? ft_impsort(*folds, ft_impsz(*folds), s_nm): *folds;
-	output(&(*files), flags, sum, *path);
-	recursion(&(*folds), flags);
 	return (sum);
 }
 
-int read_d(char *path, t_imp **files, char *flags)
+int read_dir(char *path, char *flags)
 {
-	int sum;
-	t_ls *rd;
+	t_imp	*folds;
+	t_imp	*files;
+	t_ls	*rd;
+	int		sum;
 
+	if (ft_strchr(flags, 'd'))
+		return (0);
+	folds = NULL;
+	files = NULL;
 	rd = (t_ls *) malloc(sizeof(t_ls));
-	sum = 0;
+	rd->path = changepath(path);
+	rd->fld = opendir(rd->path);
+	sum = do_read_loop(&folds,&files, &rd, flags);
+	closedir(rd->fld);
+	ft_strdel(&(rd->path));
+	free(rd);
+	folds = (!ft_strchr(flags, 'f')) ? ft_impsort(folds, ft_impsz(folds), s_nm): folds;
+	output(&files, flags, sum, path);
+	recursion(&folds, flags);
+	return (1);
+}
+
+int read_file(char *path, char *flags)
+{
+	t_ls *rd;
+	t_imp	*file;
+
+	file = NULL;
+	rd = (t_ls *) malloc(sizeof(t_ls));
 	rd->entry = NULL;
 	rd->path = ft_strdup(path);
 	lstat(path, &(rd->stat));
-	sum = calcblock(sum, flags, rd->path, rd->stat.st_blocks);
-	get_params(&(*files), rd);
-	free(rd->path);
-	free (rd);
-	output(&(*files), flags, sum, path);
+	get_params(&file, rd);
+	output(&file, flags, -1, path);
+	ft_strdel(&(rd->path));
+	free(rd);
 	return (0);
 }
 
 int linkaccess(char *path, char *flags)
 {
-	char *buf;
+	struct stat st;
+	int c;
+	int n;
 
-	buf = ft_strnew(0);
-	if (readlink(path, buf, 0) < 0)
+	n = ft_strlen(path);
+	stat(path, &st);
+	c = path[n - 1];
+	if (!S_ISDIR(st.st_mode))
 	{
-		ft_strdel(&buf);
+		if (c != 47)
+			return (0);
 		return (1);
 	}
-	ft_strdel(&buf);
-	if (find (flags, "longOks") && path[ft_strlen(path) - 1] == '/')
+	if (c == 47)
 		return (1);
-	if (find (flags, "longOks"))
+	if (!find(flags, "longks"))
+		return (1);
+	return (0);
+}
+
+int read_link(char *path, char *flags)
+{
+	struct stat st;
+	char	*buf;
+
+	if (ft_strchr(flags, 'd'))
 		return (0);
+	lstat(path, &st);
+	if (!S_ISLNK(st.st_mode))
+		return (0);
+	buf = ft_strnew(255);
+	readlink(path, buf, 255);
+	if (linkaccess(path, flags))
+	{
+		if (S_ISDIR(st.st_mode))
+			read_dir(buf, flags);
+		else
+			read_file(buf, flags);
+	}
+	else
+		read_file(path, flags);
 	return (1);
 }
 
-int read_f(char *path, t_imp **files, char *flags)
+int read_folders(char *path, char *flags)
 {
-	int sum;
-	char *buf;
-	t_ls *rd;
-
-	sum = 0;
-	buf = ft_strnew(255);
-	if((readlink(path, buf, 255) && buf[0] > 0))
-		read_folders(&buf, flags);
-	else
-	{
-		rd = (t_ls *) malloc(sizeof(t_ls));
-		rd->entry = NULL;
-		if(lstat(path, &(rd->stat)) > 0)
-		{
-			rd->path = ft_strdup(ft_strrchr(path, '/') ? ft_strrchr(path,'/')+1 : path);
-			sum = calcblock(sum, flags, rd->path, rd->stat.st_blocks);
-			get_params(&(*files), rd);
-			ft_strdel(&buf);
-			output(&(*files), flags, sum, path);
-		}
-		free (rd);
-	}
-	return (sum);
-}
-
-int read_folders(char **path, char *flags)
-{
-	t_imp *folds;
-	t_imp *files;
-	DIR 	*fld;
+	char *input;
+	DIR  *fld;
 
 	errno = 0;
-	folds = NULL;
-	files = NULL;
-	fld = NULL;
-	if (ft_strchr(flags, 'd'))
-		read_d(*path, &files, flags);
-	else if((fld = (opendir(*path))))
-	{
-		if(linkaccess(*path, flags) == 1)
-			read_dir(&(*path), &files, flags, &folds);
-		else
-			read_d(*path, &files, flags);
+	input = ft_strdup(path);
+	if((fld = opendir(path)))
 		closedir(fld);
+	if (errno == 0)
+	{
+		if(read_dir(input, flags) == 0)
+			read_file(input, flags);
 	}
-	else if (errno == ENOTDIR)
-		read_f(*path, &files, flags);
 	else
-		access_dir_error(*path);
+	{
+		if(errno == ENOENT || errno == EACCES ||
+			(errno == ENOTDIR && path[ft_strlen(input) - 1] == '/'))
+			access_dir_error(input);
+		else if(errno == ENOTDIR)
+			if (read_link(input,flags) == 0)
+				if(read_dir(input, flags) == 0)
+					read_file(input, flags);
+	}
+	ft_strdel(&input);
 	return (0);
 }

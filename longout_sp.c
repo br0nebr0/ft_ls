@@ -24,30 +24,23 @@ int ch_str_sz(int size, char *str)
 
 int *get_sizes(t_imp *list, char *flags)
 {
-	int *size;
+	int *sz;
 	t_file *stat;
 
-	size = (int *) ft_memalloc(sizeof(int) * 5);
+	sz = (int *) ft_memalloc(sizeof(int) * 5);
 	while (list)
 	{
 		stat = (t_file *) list->content;
-		if( ft_strchr(flags, 'k'))
-			size[0] = ch_nbr_sz(size[0], stat->blk);
-		if(ft_strchr(flags, 's'))
-			size[0] = ch_nbr_sz(size[0], stat->blk / 2);
-		size[1] = ch_nbr_sz(size[1], stat->lnk);
-		if(ft_strchr(flags, 'n'))
-			size[2] = ch_nbr_sz(size[2], getpwuid(stat->usr)->pw_uid);
-		if(!ft_strchr(flags, 'n'))
-			size[2] = ch_str_sz(size[2], getpwuid(stat->usr)->pw_name);
-		if(ft_strchr(flags, 'n'))
-			size[3] = ch_nbr_sz(size[3], getgrgid(stat->usr)->gr_gid);
-		if(!ft_strchr(flags, 'n'))
-			size[3] = ch_str_sz(size[3], getgrgid(stat->usr)->gr_name);
-		size[4] = ch_nbr_sz(size[4], stat->size);			
+		sz[0] = ch_nbr_sz(sz[0], stat->blk / ((ft_strchr(flags, 's')) ? 2 : 1));
+		sz[1] = ch_nbr_sz(sz[1], stat->lnk);
+		sz[2] = ft_strchr(flags, 'n') ? ch_nbr_sz(sz[2], getpwuid(stat->usr)->pw_uid)
+		: ch_str_sz(sz[2], getpwuid(stat->usr)->pw_name);
+		sz[3] = ft_strchr(flags, 'n') ? ch_nbr_sz(sz[3], getgrgid(stat->usr)->gr_gid)
+		: ch_str_sz(sz[3], getgrgid(stat->usr)->gr_name);
+		sz[4] = ch_nbr_sz(sz[4], stat->size);			
 		list = list->next;
 	}
-	return (size);
+	return (sz);
 }
 
 void out(t_imp **params, char *flags, int *size, char *path)
@@ -77,15 +70,18 @@ void output(t_imp **params, char *flags, int sum, char *path)
 
 	lst = *params;
 	size = NULL;
-	if (find(flags, "longOks"))
+	if (find(flags, "longks"))
 	{
 	size = get_sizes(lst, flags);
-	ft_putstr("total: ");
-		if (ft_strchr(flags, 's'))
-			ft_putnbr(sum / 2);
-		else
-			ft_putnbr(sum);
-	ft_putchar('\n');
+		if (sum >= 0)
+		{
+			ft_putstr("total: ");
+			if (ft_strchr(flags, 's'))
+				ft_putnbr(sum / 2);
+			else
+				ft_putnbr(sum);
+			ft_putchar('\n');
+		}
 	}
 	sort_by_flags(&lst, flags);
 	while (lst)
@@ -93,6 +89,5 @@ void output(t_imp **params, char *flags, int sum, char *path)
 		out(&lst, flags, size, path);
 		ft_impdel(&lst, del_pars);
 	}
-	if (size)
-		free(size);
+	free (size);
 }

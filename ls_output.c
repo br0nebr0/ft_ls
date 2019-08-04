@@ -102,11 +102,11 @@ void printlong(t_file *buf, char *flags, int *size, char *time)
 {
 	char *bff;
 
-	if (ft_strchr(flags, 'k'))
+	if (find(flags, "sk"))
 	{
-		bff = ft_itoa(buf->blk);
+		bff = ft_itoa((ft_strchr(flags, 's'))? buf->blk / 2 : buf->blk);
 		printwspaces(size[0] - (int) ft_strlen(bff));
-		printnum(buf->blk);
+		printnum((ft_strchr(flags, 's'))? buf->blk / 2 : buf->blk);
 		ft_strdel(&bff);
 	}
 	printword(buf->mode);
@@ -160,48 +160,44 @@ void color_out(char *mode)
 	}
 }
 
-void printlink(char *flags, char *path, char *file, struct stat st)
+void printlink(char *flags, char *path, char *name)
 {
 	char *buf;
-	char *fp;
 	struct stat	rd;
 	char *mode;
+	char *url;
 
 	buf = ft_strnew(255);
-	fp = ft_strjoin(path, file);
-	stat(fp, &(rd));
-	if (S_ISLNK(st.st_mode) && ft_strchr(flags, 'l'))
+	url = (ft_strequ(path, name) == 1) ? ft_strdup(path) : ft_strjoin(path, name);
+	readlink(url, buf, 255);
+	ft_putstr(f_clear);
+	ft_putstr((buf[0] > 0) ? " -> " : "");
+	if (ft_strchr(flags, 'G') && stat(buf, &rd) >= 0)
 	{
-		readlink(fp, buf, 255);
-		ft_putstr(f_clear);
-		ft_putstr((buf[0] > 0) ? " -> " : "");
-		if (ft_strchr(flags, 'G'))
-		{
-			mode = get_mode(rd);
-			color_out(mode);		
-		}
-		ft_putstr(buf);
+		mode = get_mode(rd);
+		color_out(mode);
+		ft_strdel(&mode);	
 	}
+	ft_putstr(buf);
 	ft_strdel(&buf);
-	ft_strdel(&fp);
+	ft_strdel(&url);
 }
 
 void printdirs(t_file *file, char *flags, int *size, char *path)
 {
 	char *time;
 	char *buf;
-	struct stat st;
 
 	buf = ft_strjoin(path, file->name);
 	time = get_time(file, flags);
-	if (ft_strchr(flags, 'l'))
+	if (find(flags, "longks"))
 		printlong(file, flags, size, time);	
 	ft_strdel(&time);
 	if (ft_strchr(flags, 'G'))
 		color_out(file->mode);
 	ft_putstr(file->name);
-	lstat(buf, &(st));
-	printlink(flags, path, file->name, st);
+	if(file->mode[0] == 'l')
+		printlink(flags, file->path, file->name);
 	if(ft_strchr(flags, 'p') && file->mode[0] == 'd')
 		ft_putchar('/');
 	if(ft_strchr(flags, 'F'))

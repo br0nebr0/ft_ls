@@ -55,6 +55,7 @@ typedef struct s_file
 	int				blk;
 	long long int	size;
 	char			*name;
+	char			*path;
 }				t_file;
 
 /*COLORS*/
@@ -100,7 +101,7 @@ void usage_error(char **flags, t_imp **path);
 void access_dir_error (char *path);
 /*other funcs*/
 void get_error(char *str);
-int read_folders(char **path, char *flags);
+int read_folders(char *path, char *flags);
 char *get_mode(struct stat file);
 void recursion(t_imp **folds, char *flags);
 char *changepath(char *path);

@@ -36,9 +36,10 @@ void *set_params(void *rd)
 	content->ls = buf->stat.st_ctim;
 	content->size = buf->stat.st_size;
 	content->blk = buf->stat.st_blocks;
+	content->path = ft_strdup(buf->path);
 	if (buf->entry)
 		content->name = ft_strdup(buf->entry->d_name);
-	else
+	else 
 		content->name = ft_strdup(buf->path);
 	return ((void *)content);
 }
@@ -54,6 +55,7 @@ void del_pars(void **rd)
 			buf = *rd;
 			ft_strdel(&(buf)->mode);
 			ft_strdel(&(buf)->name);
+			ft_strdel(&(buf)->path);
 			ft_memdel((void **)&buf);
 		}
 	}
@@ -61,6 +63,7 @@ void del_pars(void **rd)
 /* Собираем все данные о файле из папки*/
 void get_params(t_imp **list, t_ls *rd)
 {
+
 	if(!*list)
 		*list = ft_impnew(rd, set_params);
 	else

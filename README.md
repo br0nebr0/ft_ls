@@ -6,4 +6,5 @@ NEED ADD:
 		g - long group format
 		F - '%' after whiteout ???
 		U - ???
-	Features: links, errors, acess control, 4 columns;
+	Features: 4 columns; ACL-atributes;
+REFACTORING!!!!
