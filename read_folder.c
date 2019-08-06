@@ -29,6 +29,14 @@ char *changepath(char *path)
 	str = ft_strdup(path);
 	return (str);
 }
+char getext(char *path, char *name)
+{
+	int value;
+
+	value = getxattr(path, name);
+	ft_putnbr(value);
+	return (0);
+}
 
 int do_read_loop(t_imp **folds, t_imp **files, t_ls **rd, char *flags)
 {
@@ -40,7 +48,8 @@ int do_read_loop(t_imp **folds, t_imp **files, t_ls **rd, char *flags)
 	{
 		buf = ft_strjoin((*rd)->path, (*rd)->entry->d_name);
 		lstat(buf, &((*rd)->stat));
-		ft_strdel(&buf);
+		(*rd)->xattr = getext((*rd)->path, (*rd)->entry->d_name);
+		ft_strdel((&buf));
 		get_dirs(&(*folds), *rd, (*rd)->path, flags);
 		get_params(&(*files), *rd);
 		sum = calcblock(sum, flags, (*rd)->entry->d_name, (*rd)->stat.st_blocks);

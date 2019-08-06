@@ -25,15 +25,14 @@
 # include <string.h>
 # include <sys/ioctl.h>
 # include <errno.h>
-/* 
-	I forgot this struct, but it important
-*/
+
 typedef struct s_ls
 {
 	DIR				*fld;
 	struct dirent	*entry;
 	struct stat		stat;
 	char			*path;
+	char			xattr;
 } 				t_ls;
 
 typedef struct s_path

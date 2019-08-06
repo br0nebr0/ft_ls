@@ -18,10 +18,6 @@ int	main(int gc, char **gv)
 	char	*flags;
 	char *buf;
 	
-	// struct winsize size;
-	// ioctl( 0, TIOCSWINSZ, (char *) &size );
-	// printf( "Rows: %u\nCols: %u\n", size.ws_row, size.ws_col );
-	// exit (0);
 	errno = 0;
 	path = NULL;
 	flags = ft_strnew(24);
